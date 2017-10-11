@@ -12,6 +12,9 @@
         <module>yanchat-core</module>
         <module>yanchat-client</module>
     </modules>
-
+    <properties>
+        <junit.version>4.12</junit.version>
+        <fastjson.version>1.2.28</fastjson.version>
+    </properties>
 
 </project>
