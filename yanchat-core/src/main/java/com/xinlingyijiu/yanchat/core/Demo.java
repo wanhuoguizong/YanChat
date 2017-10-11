@@ -5,6 +5,6 @@ package com.xinlingyijiu.yanchat.core;
  */
 public class Demo {
     public static void main(String[] args) {
-        System.out.println("Æô¶¯£¡");
+        System.out.println("å¯åŠ¨ï¼");
     }
 }

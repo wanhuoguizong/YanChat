@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * Created by laotou on 2017/10/11.
  */
-public class CloseableUtil {
+public class IOUtil {
     public static void close(Closeable closeable) {
         if (closeable == null) return;
         try {
