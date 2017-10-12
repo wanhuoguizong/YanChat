@@ -9,7 +9,7 @@ import java.net.MulticastSocket;
 public class MulticastSocketManager implements SocketManager{
     private MulticastSocket socket;
 
-    private String broadcastIp;
+    private String broadcastHost;
 
     private int port;
 
@@ -17,26 +17,26 @@ public class MulticastSocketManager implements SocketManager{
     public MulticastSocket getSocket() throws IOException {
         if (this.socket == null) {
             this.socket = new MulticastSocket(this.port);
-            this.socket.joinGroup(InetAddress.getByName(this.broadcastIp));
+            this.socket.joinGroup(InetAddress.getByName(this.broadcastHost));
         }
         return this.socket;
     }
 
     /**
-     * @param broadcastIp 广播Ip
+     * @param broadcastHost 广播Ip
      * @param port        监听端口
      */
-    public MulticastSocketManager(String broadcastIp, int port) {
-        this.broadcastIp = broadcastIp;
+    public MulticastSocketManager(String broadcastHost, int port) {
+        this.broadcastHost = broadcastHost;
         this.port = port;
     }
 
-    public String getBroadcastIp() {
-        return broadcastIp;
+    public String getBroadcastHost() {
+        return broadcastHost;
     }
 
-//    public void setBroadcastIp(String broadcastIp) {
-//        this.broadcastIp = broadcastIp;
+//    public void setBroadcastIp(String broadcastHost) {
+//        this.broadcastHost = broadcastHost;
 //    }
 
     public int getPort() {
@@ -53,7 +53,7 @@ public class MulticastSocketManager implements SocketManager{
         this.port = 0;
     }
 
-//    public void setPort(int port) {
+//    public void setBroadcastPort(int port) {
 //        this.port = port;
 //    }
 }

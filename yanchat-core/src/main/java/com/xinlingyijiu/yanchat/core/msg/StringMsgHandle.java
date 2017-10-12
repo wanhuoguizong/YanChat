@@ -2,7 +2,7 @@ package com.xinlingyijiu.yanchat.core.msg;
 
 import java.io.UnsupportedEncodingException;
 
-public class StringMsgHandle implements MsgHandle <String,byte[]>{
+public class StringMsgHandle implements MsgHandle <String>{
 
 
 

@@ -10,16 +10,39 @@ public class BroadcastMsg<T> implements Serializable{
     private long timestemp;
     private String type;
     private T data;
+    private String host;
+    private Integer port;
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
 
     public BroadcastMsg() {
         this(null,null);
     }
 
     public BroadcastMsg(String type, T data) {
+        this(type,data,null,null);
+    }
+    public BroadcastMsg(String type, T data,String host,Integer port) {
         this.id = GUIDUtil.genRandomGUID();
         this.timestemp = System.currentTimeMillis();
         this.type = type;
         this.data = data;
+        this.host = host;
+        this.port = port;
     }
 
     public String getId() {

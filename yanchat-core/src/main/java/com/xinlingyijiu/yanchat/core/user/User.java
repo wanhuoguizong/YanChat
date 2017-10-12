@@ -8,12 +8,31 @@ import java.io.Serializable;
 public class User implements Serializable{
     private String id;
     private String nickName;
-    private String ip;
-    private Integer port;
+    private String host;
+    private Integer broadcastPort;
+    private Integer tcpPort;
+    private Integer udpPort;
     private boolean online;
+
 
     public User() {
 
+    }
+
+    public Integer getTcpPort() {
+        return tcpPort;
+    }
+
+    public void setTcpPort(Integer tcpPort) {
+        this.tcpPort = tcpPort;
+    }
+
+    public Integer getUdpPort() {
+        return udpPort;
+    }
+
+    public void setUdpPort(Integer udpPort) {
+        this.udpPort = udpPort;
     }
 
     public String getId() {
@@ -32,20 +51,20 @@ public class User implements Serializable{
         this.online = online;
     }
 
-    public String getIp() {
-        return ip;
+    public String getHost() {
+        return host;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setHost(String host) {
+        this.host = host;
     }
 
-    public Integer getPort() {
-        return port;
+    public Integer getBroadcastPort() {
+        return broadcastPort;
     }
 
-    public void setPort(Integer port) {
-        this.port = port;
+    public void setBroadcastPort(Integer broadcastPort) {
+        this.broadcastPort = broadcastPort;
     }
 
     public String getNickName() {
@@ -66,8 +85,8 @@ public class User implements Serializable{
         if (online != user.online) return false;
         if (id != null ? !id.equals(user.id) : user.id != null) return false;
         if (nickName != null ? !nickName.equals(user.nickName) : user.nickName != null) return false;
-        if (ip != null ? !ip.equals(user.ip) : user.ip != null) return false;
-        return !(port != null ? !port.equals(user.port) : user.port != null);
+        if (host != null ? !host.equals(user.host) : user.host != null) return false;
+        return !(broadcastPort != null ? !broadcastPort.equals(user.broadcastPort) : user.broadcastPort != null);
 
     }
 
@@ -75,8 +94,8 @@ public class User implements Serializable{
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (nickName != null ? nickName.hashCode() : 0);
-        result = 31 * result + (ip != null ? ip.hashCode() : 0);
-        result = 31 * result + (port != null ? port.hashCode() : 0);
+        result = 31 * result + (host != null ? host.hashCode() : 0);
+        result = 31 * result + (broadcastPort != null ? broadcastPort.hashCode() : 0);
         result = 31 * result + (online ? 1 : 0);
         return result;
     }
@@ -86,8 +105,8 @@ public class User implements Serializable{
         return "User{" +
                 "id='" + id + '\'' +
                 ", nickName='" + nickName + '\'' +
-                ", ip='" + ip + '\'' +
-                ", port=" + port +
+                ", host='" + host + '\'' +
+                ", broadcastPort=" + broadcastPort +
                 ", online=" + online +
                 '}';
     }

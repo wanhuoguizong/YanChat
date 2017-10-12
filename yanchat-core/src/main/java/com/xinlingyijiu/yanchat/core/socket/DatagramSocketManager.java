@@ -49,7 +49,7 @@ public class DatagramSocketManager implements SocketManager{
         this.port = 0;
     }
 
-//    public void setPort(int port) {
+//    public void setBroadcastPort(int port) {
 //        this.port = port;
 //    }
 }

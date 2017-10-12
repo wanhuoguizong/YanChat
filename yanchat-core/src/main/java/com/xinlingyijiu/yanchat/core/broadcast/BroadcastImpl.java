@@ -1,6 +1,8 @@
 package com.xinlingyijiu.yanchat.core.broadcast;
 
+import com.alibaba.fastjson.JSON;
 import com.xinlingyijiu.yanchat.core.Constant;
+import com.xinlingyijiu.yanchat.core.bean.BroadcastMsg;
 import com.xinlingyijiu.yanchat.core.msg.MsgHandleContext;
 import com.xinlingyijiu.yanchat.core.socket.MulticastSocketManager;
 import com.xinlingyijiu.yanchat.util.IOUtil;
@@ -15,17 +17,23 @@ public class BroadcastImpl implements Broadcast {
     public MulticastSocketManager socketManager;
 
     @Override
-    public void listen(String broadcastIp, int port) throws SocketException {
+    public void listen(String broadcastHost, int port) throws SocketException {
         if (socketManager != null)  throw new SocketException("MulticastSocketManager already defined");
-        Objects.requireNonNull(broadcastIp,"broadcastIp 不能是null");
-        socketManager = new MulticastSocketManager(broadcastIp,port);
+        Objects.requireNonNull(broadcastHost,"broadcastIp not defined");
+        socketManager = new MulticastSocketManager(broadcastHost,port);
         while (true) {
             byte[] bytes = new byte[Constant.BROADCAST_LISTEN_LEN];
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
             try {
                 socketManager.getSocket().receive(packet);
-                System.out.println(String.format("接收：%s", new String(packet.getData())));
+
                 String data = (String)MsgHandleContext.getInstance().getConverseHand(Constant.MSG_TYPE.TEST).apply(packet.getData());
+                System.out.println(String.format("接收：%s", data));
+                System.out.println("ip:"+packet.getAddress().getHostName()+";port:"+packet.getPort());
+                BroadcastMsg broadcastMsg = JSON.parseObject(data, BroadcastMsg.class);
+                broadcastMsg.setHost(packet.getAddress().getHostName());
+                broadcastMsg.setPort(packet.getPort());
+                System.out.println(broadcastMsg);
                 //todo 消息处理
             } catch (IOException e) {
                 e.printStackTrace();
@@ -36,14 +44,14 @@ public class BroadcastImpl implements Broadcast {
     @Override
     public void send(int port, byte[] msg) throws SocketException {
         if (socketManager == null)  throw new SocketException("MulticastSocketManager is not defined");
-        send(socketManager.getBroadcastIp(),port,msg);
+        send(socketManager.getBroadcastHost(),port,msg);
     }
 
     @Override
-    public void send(String ip,int port, byte[] msg) {
+    public void send(String host,int port, byte[] msg) {
         Objects.requireNonNull(msg,"msg 不能是空");
         try {
-            DatagramPacket packet = new DatagramPacket(msg,msg.length, InetAddress.getByName(ip),port );
+            DatagramPacket packet = new DatagramPacket(msg,msg.length, InetAddress.getByName(host),port );
             socketManager.getSocket().send(packet);
 
         } catch (IOException e) {
@@ -54,7 +62,7 @@ public class BroadcastImpl implements Broadcast {
     @Override
     public void send(byte[] msg) throws SocketException {
         if (socketManager == null)  throw new SocketException("MulticastSocketManager is not defined");
-        send(socketManager.getBroadcastIp(),socketManager.getPort(),msg);
+        send(socketManager.getBroadcastHost(),socketManager.getPort(),msg);
     }
 
     public MulticastSocketManager getSocketManager() {

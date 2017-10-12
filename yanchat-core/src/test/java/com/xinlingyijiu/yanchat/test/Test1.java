@@ -3,8 +3,14 @@ package com.xinlingyijiu.yanchat.test;
 import com.xinlingyijiu.yanchat.core.user.User;
 import com.xinlingyijiu.yanchat.core.user.UserManager;
 import com.xinlingyijiu.yanchat.core.user.UserManagerImpl;
+import com.xinlingyijiu.yanchat.util.IpV4Util;
 import org.junit.Test;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -14,15 +20,15 @@ public class Test1 {
     @Test
     public void testUserManager(){
         User user = new User();
-        user.setIp("0.0.0.0");
+        user.setHost("0.0.0.0");
         user.setNickName("Hello world!");
-        user.setPort(8080);
+        user.setBroadcastPort(8080);
         user.setOnline(true);
 
         User user2 = new User();
-        user2.setIp("0.0.0.1");
+        user2.setHost("0.0.0.1");
         user2.setNickName("Hello world!");
-        user2.setPort(8080);
+        user2.setBroadcastPort(8080);
         user2.setOnline(true);
 
         UserManager um =  new UserManagerImpl();
@@ -41,5 +47,34 @@ public class Test1 {
         System.out.println(list.get(0).equals(user));
         System.out.println(list.get(0) == user);
 
+    }
+    @Test
+    public void getLocalIp() throws UnknownHostException {
+        InetAddress[] ipAdd = InetAddress.getAllByName(InetAddress.getLocalHost().getHostAddress());
+        System.out.println(Arrays.toString(ipAdd));
+
+        System.out.println(IpV4Util.checkIpV4Type("169.254.108.1"));
+        System.out.println("C类ip为："+IpV4Util.getLocalCTypeIpV4());
+    }
+    @Test
+    public  void getIpAddress() {
+        try {
+            Enumeration<NetworkInterface> interfaces = null;
+            interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface ni = interfaces.nextElement();
+                Enumeration<InetAddress> addresss = ni.getInetAddresses();
+                while (addresss.hasMoreElements()) {
+                    InetAddress nextElement = addresss.nextElement();
+                    String hostAddress = nextElement.getHostAddress();
+                    System.out.println("本机IP地址为：" + hostAddress);
+                    NetworkInterface net = NetworkInterface.getByInetAddress(nextElement);
+                    System.out.println(net.getName());
+                    System.out.println(net.getDisplayName());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

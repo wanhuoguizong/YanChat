@@ -27,9 +27,9 @@ public class UserManagerImpl implements UserManager {
             if (Objects.equals(user1.getId(), user2.getId())) {
                 return true;
             }
-            if (Objects.equals(user1.getIp(), user2.getIp())
+            if (Objects.equals(user1.getHost(), user2.getHost())
                     && Objects.equals(user1.getNickName(), user2.getNickName())
-                    && Objects.equals(user1.getPort(), user2.getPort())
+                    && Objects.equals(user1.getBroadcastPort(), user2.getBroadcastPort())
                     ) {
                 return true;
             }

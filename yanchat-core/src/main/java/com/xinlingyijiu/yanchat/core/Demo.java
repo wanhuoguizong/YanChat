@@ -3,6 +3,8 @@ package com.xinlingyijiu.yanchat.core;
 import com.xinlingyijiu.yanchat.core.bean.BroadcastMsg;
 import com.xinlingyijiu.yanchat.core.broadcast.Broadcast;
 import com.xinlingyijiu.yanchat.core.broadcast.BroadcastImpl;
+import com.xinlingyijiu.yanchat.core.msg.MsgHandleContext;
+import com.xinlingyijiu.yanchat.core.msg.StringMsgConverseHandle;
 import com.xinlingyijiu.yanchat.core.user.User;
 
 import java.net.SocketException;
@@ -17,16 +19,20 @@ public class Demo {
 //        MulticastSocket
 //        DatagramSocket
         User user = new User();
-        user.setIp("0.0.0.0");
+        user.setHost("0.0.0.0");
         user.setNickName("Hello world!");
-        user.setPort(8080);
+        user.setBroadcastPort(Constant.DEFAULT_PORT.BROADCAST);
+        user.setTcpPort(Constant.DEFAULT_PORT.TCP);
+        user.setUdpPort(Constant.DEFAULT_PORT.UDP);
         user.setOnline(true);
 
-        BroadcastMsg<User> userBroadcastMsg = new BroadcastMsg<>();
+        BroadcastMsg<User> userBroadcastMsg = new BroadcastMsg<>(Constant.MSG_TYPE.TEST,user);
         Broadcast broadcast = new BroadcastImpl();
+
+        MsgHandleContext.getInstance().putConverseHandle(Constant.MSG_TYPE.TEST,new StringMsgConverseHandle());
         new Thread(() -> {
             try {
-                broadcast.listen(Constant.BROADCAST_DEFAULT_IP,Constant.BROADCAST_DEFAULT_PORT);
+                broadcast.listen(Constant.BROADCAST_DEFAULT_HOST,Constant.DEFAULT_PORT.BROADCAST);
             } catch (SocketException e) {
                 e.printStackTrace();
             }
