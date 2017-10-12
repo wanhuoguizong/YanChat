@@ -2,14 +2,14 @@ package com.xinlingyijiu.yanchat.core.msg;
 
 import java.io.UnsupportedEncodingException;
 
-public class StringMsgHandle implements MsgHandle <String,byte[]>{
+public class StringMsgConverseHandle implements MsgConverseHandle <String>{
 
 
 
     @Override
-    public byte[] apply(String s,String coding) {
+    public  String apply(byte[] bytes,String coding) {
         try {
-            return s == null ? new byte[0] : s.getBytes(coding);
+            return new String(bytes,coding);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             throw new RuntimeException("编码转换异常！");

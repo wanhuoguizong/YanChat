@@ -1,9 +1,10 @@
 package com.xinlingyijiu.yanchat.core.broadcast;
 
+import com.xinlingyijiu.yanchat.core.Constant;
+import com.xinlingyijiu.yanchat.core.msg.MsgHandleContext;
 import com.xinlingyijiu.yanchat.core.socket.MulticastSocketManager;
 import com.xinlingyijiu.yanchat.util.IOUtil;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -19,11 +20,12 @@ public class BroadcastImpl implements Broadcast {
         Objects.requireNonNull(broadcastIp,"broadcastIp 不能是null");
         socketManager = new MulticastSocketManager(broadcastIp,port);
         while (true) {
-            byte[] bytes = new byte[2048];
+            byte[] bytes = new byte[Constant.BROADCAST_LISTEN_LEN];
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
             try {
                 socketManager.getSocket().receive(packet);
                 System.out.println(String.format("接收：%s", new String(packet.getData())));
+                String data = (String)MsgHandleContext.getInstance().getConverseHand(Constant.MSG_TYPE.TEST).apply(packet.getData());
                 //todo 消息处理
             } catch (IOException e) {
                 e.printStackTrace();
