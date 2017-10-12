@@ -12,7 +12,7 @@ public class BroadcastMsg<T> implements Serializable{
     private T data;
 
     public BroadcastMsg() {
-        new BroadcastMsg<>(null,null);
+        this(null,null);
     }
 
     public BroadcastMsg(String type, T data) {
@@ -26,7 +26,13 @@ public class BroadcastMsg<T> implements Serializable{
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
+    public void setTimestemp(long timestemp) {
+        this.timestemp = timestemp;
+    }
 
     public long getTimestemp() {
         return timestemp;

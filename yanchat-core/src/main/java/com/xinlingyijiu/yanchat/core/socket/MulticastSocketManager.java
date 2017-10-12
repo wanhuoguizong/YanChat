@@ -1,5 +1,7 @@
 package com.xinlingyijiu.yanchat.core.socket;
 
+import com.xinlingyijiu.yanchat.util.IOUtil;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
@@ -39,6 +41,16 @@ public class MulticastSocketManager implements SocketManager{
 
     public int getPort() {
         return port;
+    }
+
+    /**
+     * 关闭所有资源
+     * @throws IOException
+     */
+    @Override
+    public void close() throws IOException {
+        IOUtil.close(this.socket);
+        this.port = 0;
     }
 
 //    public void setPort(int port) {

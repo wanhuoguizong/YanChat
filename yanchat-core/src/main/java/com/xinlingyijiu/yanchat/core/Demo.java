@@ -5,9 +5,6 @@ import com.xinlingyijiu.yanchat.core.broadcast.Broadcast;
 import com.xinlingyijiu.yanchat.core.broadcast.BroadcastImpl;
 import com.xinlingyijiu.yanchat.core.user.User;
 
-import javax.annotation.Resource;
-import java.net.DatagramSocket;
-import java.net.MulticastSocket;
 import java.net.SocketException;
 
 /**
@@ -16,7 +13,7 @@ import java.net.SocketException;
 public class Demo {
     public static void main(String[] args) {
         System.out.println("启动！");
-        Demo demo = new Demo();
+//        Demo demo = new Demo();
 //        MulticastSocket
 //        DatagramSocket
         User user = new User();
@@ -25,11 +22,11 @@ public class Demo {
         user.setPort(8080);
         user.setOnline(true);
 
-        BroadcastMsg<User> userBroadcastMsg = new BroadcastMsg<>("user",user);
+        BroadcastMsg<User> userBroadcastMsg = new BroadcastMsg<>();
         Broadcast broadcast = new BroadcastImpl();
         new Thread(() -> {
             try {
-                broadcast.listen("230.250.250.250",9700);
+                broadcast.listen(Constant.BROADCAST_DEFAULT_IP,Constant.BROADCAST_DEFAULT_PORT);
             } catch (SocketException e) {
                 e.printStackTrace();
             }
@@ -42,7 +39,11 @@ public class Demo {
                 e.printStackTrace();
             }
             System.out.println(String.format("发送：%s",userBroadcastMsg.toJSONString()));
-            broadcast.send(userBroadcastMsg.toJSONString().getBytes());
+            try {
+                broadcast.send(userBroadcastMsg.toJSONString().getBytes());
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

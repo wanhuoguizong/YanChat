@@ -1,13 +1,13 @@
 package com.xinlingyijiu.yanchat.core.broadcast;
 
-import com.xinlingyijiu.yanchat.core.broadcast.Broadcast;
 import com.xinlingyijiu.yanchat.core.socket.MulticastSocketManager;
+import com.xinlingyijiu.yanchat.util.IOUtil;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Objects;
 
 public class BroadcastImpl implements Broadcast {
@@ -32,7 +32,8 @@ public class BroadcastImpl implements Broadcast {
     }
 
     @Override
-    public void send(int port, byte[] msg) {
+    public void send(int port, byte[] msg) throws SocketException {
+        if (socketManager == null)  throw new SocketException("MulticastSocketManager is not defined");
         send(socketManager.getBroadcastIp(),port,msg);
     }
 
@@ -49,11 +50,22 @@ public class BroadcastImpl implements Broadcast {
     }
 
     @Override
-    public void send(byte[] msg) {
+    public void send(byte[] msg) throws SocketException {
+        if (socketManager == null)  throw new SocketException("MulticastSocketManager is not defined");
         send(socketManager.getBroadcastIp(),socketManager.getPort(),msg);
     }
 
     public MulticastSocketManager getSocketManager() {
         return socketManager;
+    }
+
+
+    /**
+     * 关闭所有资源
+     * @throws IOException
+     */
+    @Override
+    public void close() throws IOException {
+        IOUtil.close(this.socketManager);
     }
 }
