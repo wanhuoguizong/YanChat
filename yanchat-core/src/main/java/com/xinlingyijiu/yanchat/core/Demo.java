@@ -25,18 +25,23 @@ public class Demo {
         user.setTcpPort(Constant.DEFAULT_PORT.TCP);
         user.setUdpPort(Constant.DEFAULT_PORT.UDP);
         user.setOnline(true);
+        BroadcastMsg<User> userBroadcastMsg = new BroadcastMsg<>(Constant.MSG_TYPE.TEXT,user);
 
-        BroadcastMsg<User> userBroadcastMsg = new BroadcastMsg<>(Constant.MSG_TYPE.TEST,user);
-        Broadcast broadcast = new BroadcastImpl();
+        Context context = Context.getInstance();
+//        context.userDefaultContext();
 
-        MsgHandleContext.getInstance().putConverseHandle(Constant.MSG_TYPE.TEST,new StringMsgConverseHandle());
-        new Thread(() -> {
-            try {
-                broadcast.listen(Constant.BROADCAST_DEFAULT_HOST,Constant.DEFAULT_PORT.BROADCAST);
-            } catch (SocketException e) {
-                e.printStackTrace();
-            }
-        }).start();
+//        Broadcast broadcast = context.getBroadcast();
+
+
+//        new Thread(() -> {
+//            try {
+//                broadcast.listen(Constant.BROADCAST_DEFAULT_HOST,Constant.DEFAULT_PORT.BROADCAST);
+//            } catch (SocketException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+
+        YanChatApplication.start(context);
 
         while (true){
             try {
@@ -46,7 +51,7 @@ public class Demo {
             }
             System.out.println(String.format("发送：%s",userBroadcastMsg.toJSONString()));
             try {
-                broadcast.send(userBroadcastMsg.toJSONString().getBytes());
+                context.getBroadcast().send(userBroadcastMsg.toJSONString().getBytes());
             } catch (SocketException e) {
                 e.printStackTrace();
             }

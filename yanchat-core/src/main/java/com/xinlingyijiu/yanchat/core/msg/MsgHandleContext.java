@@ -2,6 +2,7 @@ package com.xinlingyijiu.yanchat.core.msg;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by laotou on 2017/10/12.
@@ -14,6 +15,8 @@ public class MsgHandleContext {
     private static MsgHandleContext context;
 
     private MsgHandleContext() {
+        this.converseHandleMap = new HashMap<>();
+        this.handleMap = new HashMap<>();
     }
 
     public static MsgHandleContext getInstance() {
@@ -36,11 +39,13 @@ public class MsgHandleContext {
         this.handleMap = handleMap;
     }
      public MsgHandle putMsgHandle(String msgType,MsgHandle handle){
-         if (this.handleMap == null) this.handleMap = new HashMap<>();
+         Objects.requireNonNull(msgType);
+         Objects.requireNonNull(handle);
          return this.handleMap.put(msgType,handle);
      }
      public MsgConverseHandle putConverseHandle(String msgType,MsgConverseHandle handle){
-         if (this.converseHandleMap == null) this.converseHandleMap = new HashMap<>();
+         Objects.requireNonNull(msgType);
+         Objects.requireNonNull(handle);
          return this.converseHandleMap.put(msgType,handle);
      }
 

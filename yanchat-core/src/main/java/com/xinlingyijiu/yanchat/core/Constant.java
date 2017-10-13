@@ -10,10 +10,15 @@ public interface Constant {
 
     //默认端口
     interface DEFAULT_PORT{
-        int BROADCAST = 9250;
-        int TCP = 9350;
-        int UDP = 9450;
+        int BROADCAST = 9250;//广播
+        int TCP = 9350;//tcp
+        int UDP = 9450;//udp
     }
+    //队列key
+    interface QUEUE_KEY{
+        String BROADCAST = "BROADCAST";
+    }
+
     //默认广播接收byte[]长度
     int BROADCAST_LISTEN_LEN = 1024;
 
@@ -21,6 +26,8 @@ public interface Constant {
      * 消息类型
      */
     interface MSG_TYPE{
-        String TEST = "TEXT";//文本
+        String TEXT = "TEXT";//文本
     }
+    //队列默认容量
+    int DEFAULT_QUEUE_CAPACITY = 20;
 }

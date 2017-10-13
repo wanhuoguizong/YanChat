@@ -9,11 +9,11 @@ public interface MsgConverseHandle <R> extends BiFunction<byte[],String,R> {
     //默认的返回byte长度1024
     int DEFAULT_LEN = 1024;
 
-    String DEFAULT_CODING = "UTF-8";
+    String DEFAULT_ENCODING = "UTF-8";
     //继承次方法对要发送的消息进行处理
-    R apply(byte[] bytes,String coding);
+    R apply(byte[] bytes,String encoding);
 
     default R apply(byte[] bytes){
-        return apply(bytes,DEFAULT_CODING);
+        return apply(bytes, DEFAULT_ENCODING);
     }
 }

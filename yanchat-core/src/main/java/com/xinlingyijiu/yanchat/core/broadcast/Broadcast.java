@@ -1,9 +1,15 @@
 package com.xinlingyijiu.yanchat.core.broadcast;
 
+import com.xinlingyijiu.yanchat.core.queue.MsgProducer;
+
 import java.io.Closeable;
 import java.net.SocketException;
 
 public interface Broadcast extends Closeable{
+
+    MsgProducer getMsgProducer();
+
+    void setMsgProducer(MsgProducer msgProducer);
 
     /**
      * 监听广播,只能调用一次，并且保持监听状态
