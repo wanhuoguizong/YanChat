@@ -23,16 +23,16 @@ public class UserManagerImpl implements UserManager {
      */
     protected boolean equalsUser(User user1, User user2) {
         if (user1 == user2) return true;
-        if (user1 != null && user2 != null) {
-            if (Objects.equals(user1.getId(), user2.getId())) {
-                return true;
-            }
-            if (Objects.equals(user1.getHost(), user2.getHost())
-                    && Objects.equals(user1.getNickName(), user2.getNickName())
-                    && Objects.equals(user1.getBroadcastPort(), user2.getBroadcastPort())
-                    ) {
-                return true;
-            }
+        if (user1 == null) return false;
+        if (user2 == null) return false;
+
+        if (Objects.equals(user1.getId(), user2.getId()))  return true;
+
+        if (Objects.equals(user1.getHost(), user2.getHost())
+                && Objects.equals(user1.getNickName(), user2.getNickName())
+                && Objects.equals(user1.getBroadcastPort(), user2.getBroadcastPort())
+                ) {
+            return true;
         }
         return false;
     }
@@ -57,8 +57,9 @@ public class UserManagerImpl implements UserManager {
     @Override
     public synchronized User setCurrentUser(User user) {
         User oldUser = currentUser;
-        online(user);
-        currentUser = getEqualsUser(user);
+        currentUser = cloneUser(user);
+//        online(user);
+//        currentUser = getEqualsUser(user);
         return oldUser;
     }
 
@@ -97,13 +98,16 @@ public class UserManagerImpl implements UserManager {
 
     //出于安全原因。不直接返回原始对象，避免在其他地方无意中修改属性
     private User cloneUser(User user) {
+        User nUser = new User();
+        copyUserPro(nUser,user);
+        return nUser;
+    }
+    private void copyUserPro(User target,User source){
         try {
-            User nUser = new User();
-            BeanUtils.copyProperties(nUser, user);
-            return nUser;
+            BeanUtils.copyProperties(target, source);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("clone user Exception");
+            throw new RuntimeException("copyProperties Exception");
         }
     }
 
@@ -125,17 +129,25 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public synchronized boolean online(User user) {
+        Objects.requireNonNull(user);
         user.setOnline(true);
+        if (equalsUser(currentUser,user)){
+            if (!Objects.equals(currentUser,user)) {
+                copyUserPro(currentUser,user);
+                return true;
+            }
+            return false;
+        }
         User oldUser = getEqualsUser(user);
         if (Objects.equals(user, oldUser)) {
             return false;
         }
         if (oldUser != null) {
-            remove(oldUser.getId());
+            copyUserPro(oldUser, user);
+        }else {
+            User newUser = cloneUser(user);
+            addUser(newUser);//保存克隆信息
         }
-        User newUser = cloneUser(user);
-        addUser(newUser);//保存克隆信息
-        if (currentUser != null && currentUser == oldUser) currentUser = newUser;
         return true;
     }
 }

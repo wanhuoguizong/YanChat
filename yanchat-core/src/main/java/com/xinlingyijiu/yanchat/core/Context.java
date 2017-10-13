@@ -3,16 +3,20 @@ package com.xinlingyijiu.yanchat.core;
 import com.xinlingyijiu.yanchat.core.broadcast.Broadcast;
 import com.xinlingyijiu.yanchat.core.broadcast.BroadcastImpl;
 import com.xinlingyijiu.yanchat.core.consumer.BroadcastMsgConsumer;
+import com.xinlingyijiu.yanchat.core.exception.YanChatRuntimeException;
 import com.xinlingyijiu.yanchat.core.msg.MsgHandleContext;
 import com.xinlingyijiu.yanchat.core.msg.StringMsgConverseHandle;
 import com.xinlingyijiu.yanchat.core.msg.StringMsgHandle;
 import com.xinlingyijiu.yanchat.core.queue.*;
 import com.xinlingyijiu.yanchat.core.socket.MulticastSocketManager;
 import com.xinlingyijiu.yanchat.core.socket.SocketManager;
+import com.xinlingyijiu.yanchat.core.user.User;
 import com.xinlingyijiu.yanchat.core.user.UserContext;
 import com.xinlingyijiu.yanchat.core.user.UserManager;
 import com.xinlingyijiu.yanchat.core.user.UserManagerImpl;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -133,9 +137,21 @@ public class Context {
      */
     public void userDefaultContext(){
 
-
+        //当前用户
+        User user = new User();
+        try {
+            user.setHost(InetAddress.getLocalHost().getHostName());
+        } catch (UnknownHostException e) {
+            throw new YanChatRuntimeException("无法获取到本地ip地址");
+        }
+        user.setOnline(true);
+        user.setNickName(user.getHost());
+        user.setBroadcastPort(getBroadcastPort());
+        user.setTcpPort(getTcpPort());
+        user.setUdpPort(getUdpPort());
         //User
         UserManagerImpl userManager = new UserManagerImpl();
+        userManager.setCurrentUser(user);
         this.setUserContext(userManager);
         this.setUserManager(userManager);
 

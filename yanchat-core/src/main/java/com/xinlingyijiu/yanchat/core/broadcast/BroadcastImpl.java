@@ -8,12 +8,14 @@ import com.xinlingyijiu.yanchat.core.msg.StringMsgConverseHandle;
 import com.xinlingyijiu.yanchat.core.queue.MsgProducer;
 import com.xinlingyijiu.yanchat.core.socket.MulticastSocketManager;
 import com.xinlingyijiu.yanchat.util.IOUtil;
+import com.xinlingyijiu.yanchat.util.ScheduledExecutorUtil;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class BroadcastImpl implements Broadcast {
     public MulticastSocketManager socketManager;
@@ -83,6 +85,18 @@ public class BroadcastImpl implements Broadcast {
     public void send(byte[] msg) throws SocketException {
         if (socketManager == null)  throw new SocketException("MulticastSocketManager is not defined");
         send(socketManager.getBroadcastHost(),socketManager.getPort(),msg);
+    }
+
+    @Override
+    public void cycle(byte[] msg, long cycleTime) {
+        Runnable runnable = () -> {
+            try {
+                this.send(msg);
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+        };
+        ScheduledExecutorUtil.getScheduler().scheduleAtFixedRate(runnable,0,cycleTime, TimeUnit.SECONDS);
     }
 
     public MulticastSocketManager getSocketManager() {

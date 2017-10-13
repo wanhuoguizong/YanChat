@@ -30,4 +30,10 @@ public interface Constant {
     }
     //队列默认容量
     int DEFAULT_QUEUE_CAPACITY = 20;
+    //广播消息类型
+    interface BROADCAST_TYPE {
+        String ONLINE = "online";
+    }
+    //上线广播周期，单位秒
+    int ONLINE_BROADCAST_CYCLE_TIME = 30;
 }

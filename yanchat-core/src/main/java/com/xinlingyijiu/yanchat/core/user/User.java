@@ -86,7 +86,10 @@ public class User implements Serializable{
         if (id != null ? !id.equals(user.id) : user.id != null) return false;
         if (nickName != null ? !nickName.equals(user.nickName) : user.nickName != null) return false;
         if (host != null ? !host.equals(user.host) : user.host != null) return false;
-        return !(broadcastPort != null ? !broadcastPort.equals(user.broadcastPort) : user.broadcastPort != null);
+        if (broadcastPort != null ? !broadcastPort.equals(user.broadcastPort) : user.broadcastPort != null)
+            return false;
+        if (tcpPort != null ? !tcpPort.equals(user.tcpPort) : user.tcpPort != null) return false;
+        return !(udpPort != null ? !udpPort.equals(user.udpPort) : user.udpPort != null);
 
     }
 
@@ -96,6 +99,8 @@ public class User implements Serializable{
         result = 31 * result + (nickName != null ? nickName.hashCode() : 0);
         result = 31 * result + (host != null ? host.hashCode() : 0);
         result = 31 * result + (broadcastPort != null ? broadcastPort.hashCode() : 0);
+        result = 31 * result + (tcpPort != null ? tcpPort.hashCode() : 0);
+        result = 31 * result + (udpPort != null ? udpPort.hashCode() : 0);
         result = 31 * result + (online ? 1 : 0);
         return result;
     }
@@ -107,6 +112,8 @@ public class User implements Serializable{
                 ", nickName='" + nickName + '\'' +
                 ", host='" + host + '\'' +
                 ", broadcastPort=" + broadcastPort +
+                ", tcpPort=" + tcpPort +
+                ", udpPort=" + udpPort +
                 ", online=" + online +
                 '}';
     }

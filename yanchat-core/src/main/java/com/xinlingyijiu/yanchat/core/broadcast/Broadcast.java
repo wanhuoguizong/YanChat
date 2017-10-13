@@ -42,4 +42,11 @@ public interface Broadcast extends Closeable{
      */
     void send( byte[] msg) throws SocketException;
 
+    /**
+     * 上线播报，每隔一段时间广播一次
+     * @param msg
+     * @param cycleTime，周期,单位秒
+     */
+    void cycle(byte[] msg,long cycleTime);
+
 }
