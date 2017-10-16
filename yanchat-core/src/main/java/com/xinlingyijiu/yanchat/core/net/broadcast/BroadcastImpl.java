@@ -1,12 +1,12 @@
-package com.xinlingyijiu.yanchat.core.broadcast;
+package com.xinlingyijiu.yanchat.core.net.broadcast;
 
 import com.alibaba.fastjson.JSON;
 import com.xinlingyijiu.yanchat.core.Constant;
 import com.xinlingyijiu.yanchat.core.bean.BroadcastMsg;
 import com.xinlingyijiu.yanchat.core.msg.MsgHandleContext;
-import com.xinlingyijiu.yanchat.core.msg.StringMsgConverseHandle;
 import com.xinlingyijiu.yanchat.core.queue.MsgProducer;
-import com.xinlingyijiu.yanchat.core.socket.MulticastSocketManager;
+import com.xinlingyijiu.yanchat.core.net.socket.MulticastSocketManager;
+import com.xinlingyijiu.yanchat.core.net.socket.UDPSocketManager;
 import com.xinlingyijiu.yanchat.util.IOUtil;
 import com.xinlingyijiu.yanchat.util.ScheduledExecutorUtil;
 
@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class BroadcastImpl implements Broadcast {
-    public MulticastSocketManager socketManager;
+    public UDPSocketManager socketManager;
 
     public MsgProducer msgProducer;
 
@@ -27,17 +27,17 @@ public class BroadcastImpl implements Broadcast {
     public void setSocketManager(MulticastSocketManager socketManager) {
         this.socketManager = socketManager;
     }
-    @Override
+//    @Override
     public MsgProducer getMsgProducer() {
         return msgProducer;
     }
-    @Override
+//    @Override
     public void setMsgProducer(MsgProducer msgProducer) {
         this.msgProducer = msgProducer;
     }
 
     @Override
-    public void listen(String broadcastHost, int port) throws SocketException {
+    public void listen(String broadcastHost, int port) throws IOException {
         if (socketManager != null)  throw new SocketException("MulticastSocketManager already defined");
         Objects.requireNonNull(broadcastHost,"broadcastIp not defined");
         socketManager = new MulticastSocketManager(broadcastHost,port);
@@ -64,9 +64,9 @@ public class BroadcastImpl implements Broadcast {
     }
 
     @Override
-    public void send(int port, byte[] msg) throws SocketException {
+    public void send(int port, byte[] msg) throws IOException {
         if (socketManager == null)  throw new SocketException("MulticastSocketManager is not defined");
-        send(socketManager.getBroadcastHost(),port,msg);
+        send(socketManager.getSocket().getInetAddress().getHostName(),port,msg);
     }
 
     @Override
@@ -82,9 +82,9 @@ public class BroadcastImpl implements Broadcast {
     }
 
     @Override
-    public void send(byte[] msg) throws SocketException {
+    public void send(byte[] msg) throws IOException {
         if (socketManager == null)  throw new SocketException("MulticastSocketManager is not defined");
-        send(socketManager.getBroadcastHost(),socketManager.getPort(),msg);
+        send(socketManager.getSocket().getInetAddress().getHostName(),socketManager.getSocket().getPort(),msg);
     }
 
     @Override
@@ -92,14 +92,14 @@ public class BroadcastImpl implements Broadcast {
         Runnable runnable = () -> {
             try {
                 this.send(msg);
-            } catch (SocketException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         };
         ScheduledExecutorUtil.getScheduler().scheduleAtFixedRate(runnable,0,cycleTime, TimeUnit.SECONDS);
     }
 
-    public MulticastSocketManager getSocketManager() {
+    public UDPSocketManager getSocketManager() {
         return socketManager;
     }
 
@@ -111,5 +111,6 @@ public class BroadcastImpl implements Broadcast {
     @Override
     public void close() throws IOException {
         IOUtil.close(this.socketManager);
+        ScheduledExecutorUtil.getScheduler().shutdown();
     }
 }

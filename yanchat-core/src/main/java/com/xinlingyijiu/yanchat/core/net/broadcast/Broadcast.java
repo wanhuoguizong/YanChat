@@ -1,23 +1,19 @@
-package com.xinlingyijiu.yanchat.core.broadcast;
-
-import com.xinlingyijiu.yanchat.core.queue.MsgProducer;
+package com.xinlingyijiu.yanchat.core.net.broadcast;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.net.SocketException;
 
 public interface Broadcast extends Closeable{
 
-    MsgProducer getMsgProducer();
-
-    void setMsgProducer(MsgProducer msgProducer);
 
     /**
      * 监听广播,只能调用一次，并且保持监听状态
-     * @param broadcastIp
+     * @param broadcastHost
      * @param port
      * @throws SocketException
      */
-    void listen(String broadcastIp, int port) throws SocketException;
+    void listen(String broadcastHost, int port) throws SocketException, IOException;
 
     /**
      * 对监听的ip，指定端口号发送信息
@@ -25,7 +21,7 @@ public interface Broadcast extends Closeable{
      * @param port
      * @param msg
      */
-    void send(int port, byte[] msg) throws SocketException;
+    void send(int port, byte[] msg) throws SocketException, IOException;
 
     /**
      * 对指定 ip、端口号发送信息
@@ -40,7 +36,7 @@ public interface Broadcast extends Closeable{
      * 必须在开始监听后才能调用
      * @param msg
      */
-    void send( byte[] msg) throws SocketException;
+    void send( byte[] msg) throws IOException;
 
     /**
      * 上线播报，每隔一段时间广播一次

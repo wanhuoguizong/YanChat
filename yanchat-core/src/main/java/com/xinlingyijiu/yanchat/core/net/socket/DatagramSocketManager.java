@@ -1,13 +1,11 @@
-package com.xinlingyijiu.yanchat.core.socket;
+package com.xinlingyijiu.yanchat.core.net.socket;
 
 import com.xinlingyijiu.yanchat.util.IOUtil;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
 
-public class DatagramSocketManager implements SocketManager{
+public class DatagramSocketManager implements UDPSocketManager {
     private DatagramSocket socket;
 
 
@@ -16,17 +14,14 @@ public class DatagramSocketManager implements SocketManager{
 
     @Override
     public DatagramSocket getSocket() throws IOException {
-        if (this.socket == null) {
-            this.socket = new MulticastSocket(this.port);
-        }
         return this.socket;
     }
 
     /**
      * @param port        监听端口
      */
-    public DatagramSocketManager( int port) {
-
+    public DatagramSocketManager( int port) throws IOException {
+        this.socket = new DatagramSocket(this.port);
         this.port = port;
     }
 

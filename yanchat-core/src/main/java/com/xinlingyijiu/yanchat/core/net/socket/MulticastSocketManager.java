@@ -1,4 +1,4 @@
-package com.xinlingyijiu.yanchat.core.socket;
+package com.xinlingyijiu.yanchat.core.net.socket;
 
 import com.xinlingyijiu.yanchat.util.IOUtil;
 
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public class MulticastSocketManager implements SocketManager{
+public class MulticastSocketManager implements UDPSocketManager {
     private MulticastSocket socket;
 
     private String broadcastHost;
@@ -15,10 +15,6 @@ public class MulticastSocketManager implements SocketManager{
 
     @Override
     public MulticastSocket getSocket() throws IOException {
-        if (this.socket == null) {
-            this.socket = new MulticastSocket(this.port);
-            this.socket.joinGroup(InetAddress.getByName(this.broadcastHost));
-        }
         return this.socket;
     }
 
@@ -26,9 +22,11 @@ public class MulticastSocketManager implements SocketManager{
      * @param broadcastHost 广播Ip
      * @param port        监听端口
      */
-    public MulticastSocketManager(String broadcastHost, int port) {
+    public MulticastSocketManager(String broadcastHost, int port) throws IOException {
         this.broadcastHost = broadcastHost;
         this.port = port;
+        this.socket = new MulticastSocket(this.port);
+        this.socket.joinGroup(InetAddress.getByName(this.broadcastHost));
     }
 
     public String getBroadcastHost() {
