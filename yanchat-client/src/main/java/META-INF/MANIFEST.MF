@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Class-Path: fastjson-1.2.28.jar commons-collections-3.2.2.jar commons-
  logging-1.2.jar commons-beanutils-1.9.3.jar
-Main-Class: com.xinlingyijiu.yanchat.core.Demo
+Main-Class: com.xinlingyijiu.yanchat.client.Main
 

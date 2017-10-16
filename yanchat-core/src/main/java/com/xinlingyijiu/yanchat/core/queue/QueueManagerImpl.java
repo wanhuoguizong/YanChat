@@ -9,8 +9,8 @@ import java.util.concurrent.BlockingQueue;
 /**
  * Created by laotou on 2017/10/13.
  */
-public class QueueManagerImpl<E> implements QueueManager<E> {
-    private Map<String,BlockingQueue<E>> queueMap;
+public class QueueManagerImpl implements QueueManager<Object> {
+    private Map<String,BlockingQueue> queueMap;
     private static QueueManagerImpl queueManager;
 
     private QueueManagerImpl() {
@@ -29,7 +29,7 @@ public class QueueManagerImpl<E> implements QueueManager<E> {
 
     @Override
     public void putQueue(String queueKey, BlockingQueue queue) throws QueueException {
-        if (queueKey == null) throw new QueueException("queueKey must be not null!",queueKey);
+        if (queueKey == null) throw new QueueException("queueKey must be not null!");
         if (queue == null) throw new QueueException(String.format("queue not defined:queueKey:'%s',queue:null",queueKey),queueKey);
         if (queueMap.containsKey(queueKey)) {
             throw new QueueException(String.format("queue already defined,queueKey:'%s'", queueKey), queueKey);

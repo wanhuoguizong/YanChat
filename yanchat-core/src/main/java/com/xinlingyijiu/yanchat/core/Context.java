@@ -1,5 +1,6 @@
 package com.xinlingyijiu.yanchat.core;
 
+import com.xinlingyijiu.yanchat.core.bean.BroadcastMsg;
 import com.xinlingyijiu.yanchat.core.broadcast.Broadcast;
 import com.xinlingyijiu.yanchat.core.broadcast.BroadcastImpl;
 import com.xinlingyijiu.yanchat.core.consumer.BroadcastMsgConsumer;
@@ -159,10 +160,10 @@ public class Context {
         //消息消费者
         BroadcastMsgConsumer consumer = new BroadcastMsgConsumer();//广播消息处理
         //队列
-        BlockingQueue blockingQueue = new ArrayBlockingQueue(Constant.DEFAULT_QUEUE_CAPACITY);
+        BlockingQueue<BroadcastMsg> broadcastMsgsQueue = new ArrayBlockingQueue<>(Constant.DEFAULT_QUEUE_CAPACITY);
         //队列管理者
-        QueueManager queueManager = QueueManagerImpl.getInstance();
-        queueManager.putQueue(Constant.QUEUE_KEY.BROADCAST,blockingQueue);//添加队列
+        QueueManagerImpl queueManager = QueueManagerImpl.getInstance();
+        queueManager.putQueue(Constant.QUEUE_KEY.BROADCAST,broadcastMsgsQueue);//添加队列
 
         //队列监听者
         QueueListennerImpl queueListenner = QueueListennerImpl.getInstance();

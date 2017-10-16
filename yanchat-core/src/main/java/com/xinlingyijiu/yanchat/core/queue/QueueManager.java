@@ -9,6 +9,6 @@ import java.util.concurrent.BlockingQueue;
  */
 public interface QueueManager<E> {
     BlockingQueue getQueue(String queueKey) throws QueueException;
-    void putQueue(String queueKey,BlockingQueue queue) throws QueueException;
+    void putQueue(String queueKey,BlockingQueue<? extends E> queue) throws QueueException;
 
 }

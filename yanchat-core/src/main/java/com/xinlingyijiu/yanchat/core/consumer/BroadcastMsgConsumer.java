@@ -12,12 +12,12 @@ import java.util.Objects;
 /**
  * Created by laotou on 2017/10/13.
  */
-public class BroadcastMsgConsumer implements MsgConsumer {
+public class BroadcastMsgConsumer implements MsgConsumer<BroadcastMsg> {
     @Override
-    public void onMessage(Object msg) throws Exception {
+    public void onMessage(BroadcastMsg msg) throws Exception {
         //todo
         System.out.println("BroadcastMsgConsumer:接收："+msg);
-        BroadcastMsg broadcastMsg = (BroadcastMsg) msg;
+        BroadcastMsg broadcastMsg =  msg;
         if (Objects.equals(Constant.BROADCAST_TYPE.ONLINE,broadcastMsg.getType())) {
             User user = ((JSON)broadcastMsg.getData()).toJavaObject(User.class);
             user.setHost(broadcastMsg.getHost());
