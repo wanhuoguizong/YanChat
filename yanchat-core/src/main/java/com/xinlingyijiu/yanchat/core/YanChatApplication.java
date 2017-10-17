@@ -21,19 +21,19 @@ public class YanChatApplication {
 
             context.getQueueListenner().listen();
 
-            ConnectMsg<User> connectMsg = new ConnectMsg<>(Constant.BROADCAST_TYPE.ONLINE, context.getUserContext().getCurrentUser());
-            byte[] byteBroadcastMsg = context.getMsgHandleContext().getHandle(Constant.MSG_TYPE.TEXT).apply(connectMsg.toJSONString());
-//            context.getBroadcast().cycle(byteBroadcastMsg, Constant.ONLINE_BROADCAST_CYCLE_TIME);
-
-            Runnable runnable = () -> {
-                try {
-                    context.getUdpConnect().send("localhost", byteBroadcastMsg);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            };
-            ScheduledExecutorUtil.getScheduler().scheduleAtFixedRate(runnable,0,10, TimeUnit.SECONDS);
-
+//            ConnectMsg<User> connectMsg = new ConnectMsg<>(Constant.BROADCAST_TYPE.ONLINE, context.getUserContext().getCurrentUser());
+//            byte[] byteBroadcastMsg = context.getMsgHandleContext().getHandle(Constant.MSG_TYPE.TEXT).apply(connectMsg.toJSONString());
+////            context.getBroadcast().cycle(byteBroadcastMsg, Constant.ONLINE_POLLING_CYCLE_TIME);
+//
+//            Runnable runnable = () -> {
+//                try {
+//                    context.getUdpConnect().send("localhost", byteBroadcastMsg);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            };
+//            ScheduledExecutorUtil.getScheduler().scheduleAtFixedRate(runnable,0,10, TimeUnit.SECONDS);
+            context.getOnlineService().onlinePolling(Constant.ONLINE_POLLING_CYCLE_TIME);
 
 
         } catch (IOException e) {

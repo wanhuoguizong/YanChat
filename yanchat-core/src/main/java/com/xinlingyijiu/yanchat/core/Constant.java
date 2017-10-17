@@ -35,5 +35,5 @@ public interface Constant {
         String ONLINE = "online";
     }
     //上线广播周期，单位秒
-    int ONLINE_BROADCAST_CYCLE_TIME = 30;
+    int ONLINE_POLLING_CYCLE_TIME = 30;
 }

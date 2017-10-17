@@ -12,6 +12,8 @@ import com.xinlingyijiu.yanchat.core.net.socket.SimpleSocketManager;
 import com.xinlingyijiu.yanchat.core.net.udp.UDPConnect;
 import com.xinlingyijiu.yanchat.core.net.udp.UDPConnectImpl;
 import com.xinlingyijiu.yanchat.core.queue.*;
+import com.xinlingyijiu.yanchat.core.service.OnlineService;
+import com.xinlingyijiu.yanchat.core.service.OnlineServiceImpl;
 import com.xinlingyijiu.yanchat.core.user.User;
 import com.xinlingyijiu.yanchat.core.user.UserContext;
 import com.xinlingyijiu.yanchat.core.user.UserManager;
@@ -34,6 +36,7 @@ public class Context {
     private UserManager userManager;
     private QueueListenner queueListenner;
     private MsgHandleContext msgHandleContext;
+    private OnlineService onlineService;
 
     private String broadcastHost ;
     private int broadcastPort;
@@ -47,6 +50,22 @@ public class Context {
         this.broadcastPort = Constant.DEFAULT_PORT.BROADCAST;
         this.tcpPort = Constant.DEFAULT_PORT.TCP;
         this.udpPort = Constant.DEFAULT_PORT.UDP;
+    }
+
+    public OnlineService getOnlineService() {
+        return onlineService;
+    }
+
+    public void setOnlineService(OnlineService onlineService) {
+        this.onlineService = onlineService;
+    }
+
+    public static Context getContext() {
+        return context;
+    }
+
+    public static void setContext(Context context) {
+        Context.context = context;
     }
 
     public UDPConnect getUdpConnect() {
@@ -168,6 +187,8 @@ public class Context {
         this.setUserManager(userManager);
 
 
+
+
         //消息消费者
         ConnectMsgConsumer consumer = new ConnectMsgConsumer();//广播消息处理
         //队列
@@ -209,10 +230,18 @@ public class Context {
         broadcast.setSocketManager(socketManager);
         this.setBroadcast(broadcast);
 
+        //UDP连接
         UDPConnectImpl udpConnect = new UDPConnectImpl();
         udpConnect.setMsgProducer(msgProducer);
         udpConnect.setSocketManager(socketManager);
         this.setUdpConnect(udpConnect);
 
+        //上下线
+        OnlineServiceImpl onlineService = new OnlineServiceImpl();
+        //todo 根据选择模式 设置
+        onlineService.setConnect(broadcast);
+//        onlineService.setConnect(udpConnect);
+        this.setOnlineService(onlineService);
+        consumer.setOnlineService(onlineService);
     }
 }
