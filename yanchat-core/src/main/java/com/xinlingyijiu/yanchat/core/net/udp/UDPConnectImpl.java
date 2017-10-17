@@ -29,7 +29,7 @@ public class UDPConnectImpl implements UDPConnect {
     public void setMsgProducer(MsgProducer msgProducer) {
         this.msgProducer = msgProducer;
     }
-
+    @Override
     public boolean isListen() {
         return isListen;
     }
@@ -63,7 +63,7 @@ public class UDPConnectImpl implements UDPConnect {
     public void listen() throws IOException {
         if (isListen) throw new SocketException("UDPConnect already listen");
         if (socketManager.getDatagramSocket() == null)
-            throw new SocketException("MulticastSocketManager already listen");
+            throw new SocketException("UDPConnect  is not defined");
         new Thread(() -> {
             while (true) {
                 try {

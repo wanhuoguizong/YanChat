@@ -23,7 +23,7 @@ public class BroadcastImpl implements Broadcast {
     public SocketManager socketManager;
 
     public boolean isListen = false;
-
+    @Override
     public boolean isListen() {
         return isListen;
     }
@@ -43,7 +43,7 @@ public class BroadcastImpl implements Broadcast {
     @Override
     public void listen() throws IOException {
         if (isListen )  throw new SocketException("Broadcast already listen");
-        if (socketManager.getMulticastSocket() == null )  throw new SocketException("MulticastSocketManager already listen");
+        if (socketManager.getMulticastSocket() == null )  throw new SocketException("MulticastSocketManager  is not defined");
 
         new Thread(() -> {
             try {

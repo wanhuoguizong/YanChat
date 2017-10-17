@@ -10,14 +10,6 @@ public interface Broadcast extends Connect{
 
 
     /**
-     * 监听广播,只能调用一次，并且保持监听状态
-//     * @param broadcastHost
-//     * @param port
-     * @throws SocketException
-     */
-//    void listen() throws  IOException;
-
-    /**
      * 对监听的ip，指定端口号发送信息
      * 必须在开始监听后才能调用
      * @param port
