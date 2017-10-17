@@ -5,7 +5,7 @@ package com.xinlingyijiu.yanchat.core;
  */
 public interface Constant {
     //缺省广播ip
-    String BROADCAST_DEFAULT_HOST = "230.250.250.250";
+    String BROADCAST_DEFAULT_HOST = "230.250.250.251";
 
 
     //默认端口

@@ -5,7 +5,7 @@ import com.xinlingyijiu.yanchat.util.GUIDUtil;
 
 import java.io.Serializable;
 
-public class BroadcastMsg<T> implements Serializable{
+public class ConnectMsg<T> implements Serializable{
     private String id;
     private long timestemp;
     private String type;
@@ -29,14 +29,14 @@ public class BroadcastMsg<T> implements Serializable{
         this.port = port;
     }
 
-    public BroadcastMsg() {
+    public ConnectMsg() {
         this(null,null);
     }
 
-    public BroadcastMsg(String type, T data) {
+    public ConnectMsg(String type, T data) {
         this(type,data,null,null);
     }
-    public BroadcastMsg(String type, T data,String host,Integer port) {
+    public ConnectMsg(String type, T data, String host, Integer port) {
         this.id = GUIDUtil.genRandomGUID();
         this.timestemp = System.currentTimeMillis();
         this.type = type;

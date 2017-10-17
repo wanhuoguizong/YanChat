@@ -11,5 +11,7 @@ public class Demo {
         context.userDefaultContext();
 
         YanChatApplication.start(context);
+
+        while (true);
     }
 }

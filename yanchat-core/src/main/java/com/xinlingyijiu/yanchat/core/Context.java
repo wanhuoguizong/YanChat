@@ -1,19 +1,23 @@
 package com.xinlingyijiu.yanchat.core;
 
-import com.xinlingyijiu.yanchat.core.bean.BroadcastMsg;
+import com.xinlingyijiu.yanchat.core.bean.ConnectMsg;
 import com.xinlingyijiu.yanchat.core.net.broadcast.Broadcast;
 import com.xinlingyijiu.yanchat.core.net.broadcast.BroadcastImpl;
-import com.xinlingyijiu.yanchat.core.consumer.BroadcastMsgConsumer;
+import com.xinlingyijiu.yanchat.core.consumer.ConnectMsgConsumer;
 import com.xinlingyijiu.yanchat.core.exception.YanChatRuntimeException;
 import com.xinlingyijiu.yanchat.core.msg.MsgHandleContext;
 import com.xinlingyijiu.yanchat.core.msg.StringMsgConverseHandle;
 import com.xinlingyijiu.yanchat.core.msg.StringMsgHandle;
+import com.xinlingyijiu.yanchat.core.net.socket.SimpleSocketManager;
+import com.xinlingyijiu.yanchat.core.net.udp.UDPConnect;
+import com.xinlingyijiu.yanchat.core.net.udp.UDPConnectImpl;
 import com.xinlingyijiu.yanchat.core.queue.*;
 import com.xinlingyijiu.yanchat.core.user.User;
 import com.xinlingyijiu.yanchat.core.user.UserContext;
 import com.xinlingyijiu.yanchat.core.user.UserManager;
 import com.xinlingyijiu.yanchat.core.user.UserManagerImpl;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Objects;
@@ -25,6 +29,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class Context {
     private Broadcast broadcast;
+    private UDPConnect udpConnect;
     private UserContext userContext;
     private UserManager userManager;
     private QueueListenner queueListenner;
@@ -42,6 +47,14 @@ public class Context {
         this.broadcastPort = Constant.DEFAULT_PORT.BROADCAST;
         this.tcpPort = Constant.DEFAULT_PORT.TCP;
         this.udpPort = Constant.DEFAULT_PORT.UDP;
+    }
+
+    public UDPConnect getUdpConnect() {
+        return udpConnect;
+    }
+
+    public void setUdpConnect(UDPConnect udpConnect) {
+        this.udpConnect = udpConnect;
     }
 
     public String getBroadcastHost() {
@@ -156,12 +169,12 @@ public class Context {
 
 
         //消息消费者
-        BroadcastMsgConsumer consumer = new BroadcastMsgConsumer();//广播消息处理
+        ConnectMsgConsumer consumer = new ConnectMsgConsumer();//广播消息处理
         //队列
-        BlockingQueue<BroadcastMsg> broadcastMsgsQueue = new ArrayBlockingQueue<>(Constant.DEFAULT_QUEUE_CAPACITY);
+        BlockingQueue<ConnectMsg> connectMsgsQueue = new ArrayBlockingQueue<>(Constant.DEFAULT_QUEUE_CAPACITY);
         //队列管理者
         QueueManagerImpl queueManager = QueueManagerImpl.getInstance();
-        queueManager.putQueue(Constant.QUEUE_KEY.BROADCAST,broadcastMsgsQueue);//添加队列
+        queueManager.putQueue(Constant.QUEUE_KEY.BROADCAST, connectMsgsQueue);//添加队列
 
         //队列监听者
         QueueListennerImpl queueListenner = QueueListennerImpl.getInstance();
@@ -183,12 +196,23 @@ public class Context {
         MsgProducerImpl msgProducer = new MsgProducerImpl();
         msgProducer.setManager(queueManager);
         //广播socket
-//        MulticastSocketManager multicastSocketManager = new MulticastSocketManager(getBroadcastHost(),getBroadcastPort());
+        SimpleSocketManager socketManager = new SimpleSocketManager();
+        try {
+            socketManager.initMulticastSocket(getBroadcastHost(),getBroadcastPort());
+            socketManager.initDatagramSocket(Constant.DEFAULT_PORT.UDP);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //广播
         BroadcastImpl broadcast = new BroadcastImpl();
         broadcast.setMsgProducer(msgProducer);
-//        broadcast.setSocketManager(multicastSocketManager);
+        broadcast.setSocketManager(socketManager);
         this.setBroadcast(broadcast);
+
+        UDPConnectImpl udpConnect = new UDPConnectImpl();
+        udpConnect.setMsgProducer(msgProducer);
+        udpConnect.setSocketManager(socketManager);
+        this.setUdpConnect(udpConnect);
 
     }
 }

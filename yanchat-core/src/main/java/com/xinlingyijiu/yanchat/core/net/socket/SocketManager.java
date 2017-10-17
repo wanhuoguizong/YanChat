@@ -1,17 +1,30 @@
 package com.xinlingyijiu.yanchat.core.net.socket;
 
-import java.net.DatagramSocket;
-import java.net.MulticastSocket;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.Closeable;
+import java.io.IOException;
+import java.net.*;
 
-public interface SocketManager {
+public interface SocketManager extends Closeable{
 
-    DatagramSocket getDatagramSocket();
+    String getMulticastHost();
 
-    MulticastSocket getMulticastSocket();
+    int getMulticastPort();
 
-    Socket getSocket();
+    int getDatagramPort();
 
-    ServerSocket getServerSocket();
+    int getServerSocketPort();
+
+    DatagramSocket getDatagramSocket() throws SocketException;
+
+    MulticastSocket getMulticastSocket() throws SocketException;
+
+//    Socket getSocket();
+
+    ServerSocket getServerSocket() throws SocketException;
+
+    void initDatagramSocket(int port) throws SocketException;
+
+    void initMulticastSocket(String host,int port) throws IOException;
+
+    void initServerSocket(int port) throws IOException;
 }
