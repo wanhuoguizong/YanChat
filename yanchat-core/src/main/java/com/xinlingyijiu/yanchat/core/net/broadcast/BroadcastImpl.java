@@ -6,7 +6,6 @@ import com.xinlingyijiu.yanchat.core.bean.ConnectMsg;
 import com.xinlingyijiu.yanchat.core.msg.MsgHandleContext;
 import com.xinlingyijiu.yanchat.core.net.socket.SocketManager;
 import com.xinlingyijiu.yanchat.core.queue.MsgProducer;
-import com.xinlingyijiu.yanchat.util.IOUtil;
 import com.xinlingyijiu.yanchat.util.ScheduledExecutorUtil;
 
 import java.io.IOException;
@@ -53,9 +52,9 @@ public class BroadcastImpl implements Broadcast {
                     try {
                         socketManager.getMulticastSocket().receive(packet);
 
-                        String data = (String) MsgHandleContext.getInstance().getConverseHand(Constant.MSG_TYPE.TEXT).apply(packet.getData());
-                        System.out.println(String.format("接收：%s", data));
-                        System.out.println("ip:" + packet.getAddress().getHostName() + ";port:" + packet.getPort());
+                        String data = (String) MsgHandleContext.getInstance().getConverseHand(Constant.DATA_TYPE.TEXT).apply(packet.getData());
+//                        System.out.println(String.format("接收：%s", data));
+//                        System.out.println("ip:" + packet.getAddress().getHostName() + ";port:" + packet.getPort());
                         ConnectMsg connectMsg = JSON.parseObject(data, ConnectMsg.class);
                         connectMsg.setHost(packet.getAddress().getHostName());
                         connectMsg.setPort(packet.getPort());
@@ -113,7 +112,7 @@ public class BroadcastImpl implements Broadcast {
     @Override
     public void send(String host, int port, String text) throws IOException {
         //todo
-        byte[] bytes =  MsgHandleContext.getInstance().getHandle(Constant.MSG_TYPE.TEXT).apply(text);
+        byte[] bytes =  MsgHandleContext.getInstance().getHandle(Constant.DATA_TYPE.TEXT).apply(text);
         send(host,port,text);
     }
     /**

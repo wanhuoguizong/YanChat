@@ -23,16 +23,17 @@ public interface Constant {
     int BROADCAST_LISTEN_LEN = 1024;
 
     /**
-     * 消息类型
+     * 消息数据类型
      */
-    interface MSG_TYPE{
+    interface DATA_TYPE {
         String TEXT = "TEXT";//文本
     }
     //队列默认容量
     int DEFAULT_QUEUE_CAPACITY = 20;
-    //广播消息类型
-    interface BROADCAST_TYPE {
+    //消息类型
+    interface MSG_TYPE {
         String ONLINE = "online";
+        String CHAT_TEXT = "文字聊天";//文字聊天
     }
     //上线广播周期，单位秒
     int ONLINE_POLLING_CYCLE_TIME = 30;

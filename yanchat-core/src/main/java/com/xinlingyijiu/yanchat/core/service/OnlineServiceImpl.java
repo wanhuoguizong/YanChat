@@ -57,8 +57,8 @@ public class OnlineServiceImpl implements OnlineService {
     public void onlinePolling(long cycleTime) {
         Context context = Context.getInstance();
         User currentUser = context.getUserContext().getCurrentUser();
-        ConnectMsg<User> connectMsg = new ConnectMsg<>(Constant.BROADCAST_TYPE.ONLINE, currentUser);
-        byte[] byteBroadcastMsg = context.getMsgHandleContext().getHandle(Constant.MSG_TYPE.TEXT).apply(connectMsg.toJSONString());
+        ConnectMsg<User> connectMsg = new ConnectMsg<>(Constant.MSG_TYPE.ONLINE, currentUser);
+        byte[] byteBroadcastMsg = context.getMsgHandleContext().getHandle(Constant.DATA_TYPE.TEXT).apply(connectMsg.toJSONString());
         Runnable runnable = () -> {
             try {
                 context.getUdpConnect().send("localhost", byteBroadcastMsg);

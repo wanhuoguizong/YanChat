@@ -12,6 +12,8 @@ import com.xinlingyijiu.yanchat.core.net.socket.SimpleSocketManager;
 import com.xinlingyijiu.yanchat.core.net.udp.UDPConnect;
 import com.xinlingyijiu.yanchat.core.net.udp.UDPConnectImpl;
 import com.xinlingyijiu.yanchat.core.queue.*;
+import com.xinlingyijiu.yanchat.core.service.ChatMsgService;
+import com.xinlingyijiu.yanchat.core.service.ChatMsgServiceImpl;
 import com.xinlingyijiu.yanchat.core.service.OnlineService;
 import com.xinlingyijiu.yanchat.core.service.OnlineServiceImpl;
 import com.xinlingyijiu.yanchat.core.user.User;
@@ -37,6 +39,7 @@ public class Context {
     private QueueListenner queueListenner;
     private MsgHandleContext msgHandleContext;
     private OnlineService onlineService;
+    private ChatMsgService chatMsgService;
 
     private String broadcastHost ;
     private int broadcastPort;
@@ -60,13 +63,6 @@ public class Context {
         this.onlineService = onlineService;
     }
 
-    public static Context getContext() {
-        return context;
-    }
-
-    public static void setContext(Context context) {
-        Context.context = context;
-    }
 
     public UDPConnect getUdpConnect() {
         return udpConnect;
@@ -149,9 +145,6 @@ public class Context {
         return userContext;
     }
 
-//    public void setUserContext(UserContext userContext) {
-//        this.userContext = userContext;
-//    }
 
     public UserManager getUserManager() {
         return userManager;
@@ -161,6 +154,14 @@ public class Context {
         Objects.requireNonNull(userManager,"userManager must be not null!");
         this.userContext = userManager;
         this.userManager = userManager;
+    }
+
+    public ChatMsgService getChatMsgService() {
+        return chatMsgService;
+    }
+
+    public void setChatMsgService(ChatMsgService chatMsgService) {
+        this.chatMsgService = chatMsgService;
     }
 
     /**
@@ -209,8 +210,8 @@ public class Context {
         StringMsgConverseHandle stringMsgConverseHandle = new StringMsgConverseHandle();//字符串
         //消息出列
         MsgHandleContext msgHandleContext = MsgHandleContext.getInstance();
-        msgHandleContext.putConverseHandle(Constant.MSG_TYPE.TEXT,stringMsgConverseHandle);//文本逆向转换
-        msgHandleContext.putMsgHandle(Constant.MSG_TYPE.TEXT, stringMsgHandle);//文本转换
+        msgHandleContext.putConverseHandle(Constant.DATA_TYPE.TEXT,stringMsgConverseHandle);//文本逆向转换
+        msgHandleContext.putMsgHandle(Constant.DATA_TYPE.TEXT, stringMsgHandle);//文本转换
         this.setMsgHandleContext(msgHandleContext);
 
         //消息生产者
@@ -243,5 +244,11 @@ public class Context {
 //        onlineService.setConnect(udpConnect);
         this.setOnlineService(onlineService);
         consumer.setOnlineService(onlineService);
+
+        ChatMsgServiceImpl chatMsgService = new ChatMsgServiceImpl();
+        chatMsgService.setConnect(udpConnect);
+        this.setChatMsgService(chatMsgService);
+        consumer.setChatMsgService(chatMsgService);
+
     }
 }

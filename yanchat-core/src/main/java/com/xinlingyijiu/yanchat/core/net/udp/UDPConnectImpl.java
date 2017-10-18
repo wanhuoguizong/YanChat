@@ -2,7 +2,6 @@ package com.xinlingyijiu.yanchat.core.net.udp;
 
 import com.alibaba.fastjson.JSON;
 import com.xinlingyijiu.yanchat.core.Constant;
-import com.xinlingyijiu.yanchat.core.Context;
 import com.xinlingyijiu.yanchat.core.bean.ConnectMsg;
 import com.xinlingyijiu.yanchat.core.msg.MsgHandleContext;
 import com.xinlingyijiu.yanchat.core.net.socket.SocketManager;
@@ -55,7 +54,7 @@ public class UDPConnectImpl implements UDPConnect {
 
     @Override
     public void send(String host, int port, String text) throws IOException {
-        byte[] bytes = MsgHandleContext.getInstance().getHandle(Constant.MSG_TYPE.TEXT).apply(text);
+        byte[] bytes = MsgHandleContext.getInstance().getHandle(Constant.DATA_TYPE.TEXT).apply(text);
         this.send(host, port, bytes);
     }
 
@@ -72,7 +71,7 @@ public class UDPConnectImpl implements UDPConnect {
 
                     socketManager.getDatagramSocket().receive(packet);
 
-                    String data = (String) MsgHandleContext.getInstance().getConverseHand(Constant.MSG_TYPE.TEXT).apply(packet.getData());
+                    String data = (String) MsgHandleContext.getInstance().getConverseHand(Constant.DATA_TYPE.TEXT).apply(packet.getData());
                     System.out.println(String.format("接收：%s", data));
                     System.out.println("ip:" + packet.getAddress().getHostName() + ";port:" + packet.getPort());
                     ConnectMsg connectMsg = JSON.parseObject(data, ConnectMsg.class);
@@ -85,6 +84,7 @@ public class UDPConnectImpl implements UDPConnect {
                 }
             }
         }).start();
+        isListen = true;
     }
 
     @Override

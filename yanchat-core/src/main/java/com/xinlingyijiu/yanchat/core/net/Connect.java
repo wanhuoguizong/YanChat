@@ -2,7 +2,6 @@ package com.xinlingyijiu.yanchat.core.net;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.SocketException;
 
 /**
  * Created by laotou on 2017/10/17.
