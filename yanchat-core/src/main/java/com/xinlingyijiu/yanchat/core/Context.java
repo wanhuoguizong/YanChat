@@ -1,6 +1,8 @@
 package com.xinlingyijiu.yanchat.core;
 
+import com.xinlingyijiu.yanchat.core.bean.Address;
 import com.xinlingyijiu.yanchat.core.bean.ConnectMsg;
+import com.xinlingyijiu.yanchat.core.bean.Model;
 import com.xinlingyijiu.yanchat.core.net.broadcast.Broadcast;
 import com.xinlingyijiu.yanchat.core.net.broadcast.BroadcastImpl;
 import com.xinlingyijiu.yanchat.core.consumer.ConnectMsgConsumer;
@@ -29,6 +31,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 /**
+ *  todo 垃圾的上下文，有时间改良
  * Created by laotou on 2017/10/12.
  */
 public class Context {
@@ -40,6 +43,8 @@ public class Context {
     private MsgHandleContext msgHandleContext;
     private OnlineService onlineService;
     private ChatMsgService chatMsgService;
+
+    private Model model;
 
     private String broadcastHost ;
     private int broadcastPort;
@@ -63,6 +68,13 @@ public class Context {
         this.onlineService = onlineService;
     }
 
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
+    }
 
     public UDPConnect getUdpConnect() {
         return udpConnect;
@@ -165,9 +177,9 @@ public class Context {
     }
 
     /**
-     * 使用默认的实现
+     * 全部使用默认的实现
      */
-    public void userDefaultContext(){
+    public void useDefaultContext(){
 
         //当前用户
         User user = new User();
@@ -187,6 +199,18 @@ public class Context {
         this.setUserContext(userManager);
         this.setUserManager(userManager);
 
+//        广播模式
+        Address address = new Address(Constant.BROADCAST_DEFAULT_HOST,Constant.DEFAULT_PORT.BROADCAST);
+        Model model = new Model();
+        model.setModel(Constant.MODEL.BROADCAST);
+        model.addAddress(address);
+        this.setModel(model);
+//        指定ip模式
+//        Address address = new Address("localhost",9451);
+//        Model model = new Model();
+//        model.setModel(Constant.MODEL.BROADCAST);
+//        model.addAddress(address);
+//        this.setModel(model);
 
 
 
@@ -225,11 +249,7 @@ public class Context {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //广播
-        BroadcastImpl broadcast = new BroadcastImpl();
-        broadcast.setMsgProducer(msgProducer);
-        broadcast.setSocketManager(socketManager);
-        this.setBroadcast(broadcast);
+
 
         //UDP连接
         UDPConnectImpl udpConnect = new UDPConnectImpl();
@@ -239,9 +259,16 @@ public class Context {
 
         //上下线
         OnlineServiceImpl onlineService = new OnlineServiceImpl();
-        //todo 根据选择模式 设置
-        onlineService.setConnect(broadcast);
-//        onlineService.setConnect(udpConnect);
+        if (Objects.equals(model.getModel(),Constant.MODEL.BROADCAST)) {
+            //广播
+            BroadcastImpl broadcast = new BroadcastImpl();
+            broadcast.setMsgProducer(msgProducer);
+            broadcast.setSocketManager(socketManager);
+            this.setBroadcast(broadcast);
+            onlineService.setConnect(broadcast);
+        }else if (Objects.equals(model.getModel(),Constant.MODEL.APPOINT)) {
+            onlineService.setConnect(udpConnect);
+        }
         this.setOnlineService(onlineService);
         consumer.setOnlineService(onlineService);
 
@@ -251,4 +278,91 @@ public class Context {
         consumer.setChatMsgService(chatMsgService);
 
     }
+
+    /**
+     * 暂时这样搞吧，屎一样的代码
+     *
+     * 初始化
+     */
+    public void init(Model model){
+
+        //当前用户
+        //User
+        UserManagerImpl userManager = new UserManagerImpl();
+//        userManager.setCurrentUser(user);
+        this.setUserContext(userManager);
+        this.setUserManager(userManager);
+
+//        广播模式
+        this.setModel(model);
+
+
+
+        //消息消费者
+        ConnectMsgConsumer consumer = new ConnectMsgConsumer();//广播消息处理
+        //队列
+        BlockingQueue<ConnectMsg> connectMsgsQueue = new ArrayBlockingQueue<>(Constant.DEFAULT_QUEUE_CAPACITY);
+        //队列管理者
+        QueueManagerImpl queueManager = QueueManagerImpl.getInstance();
+        queueManager.putQueue(Constant.QUEUE_KEY.BROADCAST, connectMsgsQueue);//添加队列
+
+        //队列监听者
+        QueueListennerImpl queueListenner = QueueListennerImpl.getInstance();
+        queueListenner.setQueueManager(queueManager);
+        queueListenner.bindConsumer(Constant.QUEUE_KEY.BROADCAST,consumer);
+        this.setQueueListenner(queueListenner);
+
+        //消息转换处理
+        StringMsgHandle stringMsgHandle = new StringMsgHandle();//字符串
+        //消息逆向处理
+        StringMsgConverseHandle stringMsgConverseHandle = new StringMsgConverseHandle();//字符串
+        //消息出列
+        MsgHandleContext msgHandleContext = MsgHandleContext.getInstance();
+        msgHandleContext.putConverseHandle(Constant.DATA_TYPE.TEXT,stringMsgConverseHandle);//文本逆向转换
+        msgHandleContext.putMsgHandle(Constant.DATA_TYPE.TEXT, stringMsgHandle);//文本转换
+        this.setMsgHandleContext(msgHandleContext);
+
+        //消息生产者
+        MsgProducerImpl msgProducer = new MsgProducerImpl();
+        msgProducer.setManager(queueManager);
+        //广播socket
+        SimpleSocketManager socketManager = new SimpleSocketManager();
+        try {
+            socketManager.initMulticastSocket(getBroadcastHost(),getBroadcastPort());
+            socketManager.initDatagramSocket(Constant.DEFAULT_PORT.UDP);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        //UDP连接
+        UDPConnectImpl udpConnect = new UDPConnectImpl();
+        udpConnect.setMsgProducer(msgProducer);
+        udpConnect.setSocketManager(socketManager);
+        this.setUdpConnect(udpConnect);
+
+        //上下线
+        OnlineServiceImpl onlineService = new OnlineServiceImpl();
+        if (Objects.equals(model.getModel(),Constant.MODEL.BROADCAST)) {
+            //广播
+            BroadcastImpl broadcast = new BroadcastImpl();
+            broadcast.setMsgProducer(msgProducer);
+            broadcast.setSocketManager(socketManager);
+            this.setBroadcast(broadcast);
+            onlineService.setConnect(broadcast);
+        }else if (Objects.equals(model.getModel(),Constant.MODEL.APPOINT)) {
+            onlineService.setConnect(udpConnect);
+        }
+        this.setOnlineService(onlineService);
+        consumer.setOnlineService(onlineService);
+
+        ChatMsgServiceImpl chatMsgService = new ChatMsgServiceImpl();
+        chatMsgService.setConnect(udpConnect);
+        this.setChatMsgService(chatMsgService);
+        consumer.setChatMsgService(chatMsgService);
+
+    }
+
+
+
 }

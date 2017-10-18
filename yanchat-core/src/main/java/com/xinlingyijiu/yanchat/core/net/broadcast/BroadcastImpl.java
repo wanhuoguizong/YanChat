@@ -111,7 +111,6 @@ public class BroadcastImpl implements Broadcast {
 
     @Override
     public void send(String host, int port, String text) throws IOException {
-        //todo
         byte[] bytes =  MsgHandleContext.getInstance().getHandle(Constant.DATA_TYPE.TEXT).apply(text);
         send(host,port,text);
     }

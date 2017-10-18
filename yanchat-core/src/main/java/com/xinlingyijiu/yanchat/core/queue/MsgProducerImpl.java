@@ -18,7 +18,7 @@ public class MsgProducerImpl implements MsgProducer {
 
     @Override
     public void sendMessage(String queueKey, Object msg) throws QueueException {
-        System.out.println("MsgProducerImpl:发送：" + msg);
+//        System.out.println("MsgProducerImpl:发送：" + msg);
         try {
             manager.getQueue(queueKey).put(msg);
         } catch (InterruptedException e) {

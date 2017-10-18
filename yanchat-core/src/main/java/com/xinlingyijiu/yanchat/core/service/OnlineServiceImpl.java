@@ -2,7 +2,10 @@ package com.xinlingyijiu.yanchat.core.service;
 
 import com.xinlingyijiu.yanchat.core.Constant;
 import com.xinlingyijiu.yanchat.core.Context;
+import com.xinlingyijiu.yanchat.core.bean.Address;
 import com.xinlingyijiu.yanchat.core.bean.ConnectMsg;
+import com.xinlingyijiu.yanchat.core.bean.Model;
+import com.xinlingyijiu.yanchat.core.exception.YanChatRuntimeException;
 import com.xinlingyijiu.yanchat.core.net.Connect;
 import com.xinlingyijiu.yanchat.core.user.User;
 import com.xinlingyijiu.yanchat.util.ScheduledExecutorUtil;
@@ -56,15 +59,26 @@ public class OnlineServiceImpl implements OnlineService {
     @Override
     public void onlinePolling(long cycleTime) {
         Context context = Context.getInstance();
+        Model model = context.getModel();
+        if (model == null) throw new YanChatRuntimeException("model has not defined");
+        List<Address> addressList = model.getAddressList();
+        if (addressList == null || addressList.isEmpty())
+            throw new YanChatRuntimeException("can not found AddressList in " + model.getClass().getName());
+
+
         User currentUser = context.getUserContext().getCurrentUser();
         ConnectMsg<User> connectMsg = new ConnectMsg<>(Constant.MSG_TYPE.ONLINE, currentUser);
         byte[] byteBroadcastMsg = context.getMsgHandleContext().getHandle(Constant.DATA_TYPE.TEXT).apply(connectMsg.toJSONString());
         Runnable runnable = () -> {
-            try {
-                context.getUdpConnect().send("localhost", byteBroadcastMsg);
-            } catch (Exception e) {
-                e.printStackTrace();
+            for (Address address : addressList) {
+                try {
+                    context.getUdpConnect().send(address.getHost(),address.getPort(), byteBroadcastMsg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
+
         };
         ScheduledExecutorUtil.getScheduler().scheduleAtFixedRate(runnable,0,cycleTime, TimeUnit.SECONDS);
     }

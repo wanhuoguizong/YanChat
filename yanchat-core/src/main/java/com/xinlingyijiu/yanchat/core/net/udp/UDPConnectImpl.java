@@ -72,8 +72,8 @@ public class UDPConnectImpl implements UDPConnect {
                     socketManager.getDatagramSocket().receive(packet);
 
                     String data = (String) MsgHandleContext.getInstance().getConverseHand(Constant.DATA_TYPE.TEXT).apply(packet.getData());
-                    System.out.println(String.format("接收：%s", data));
-                    System.out.println("ip:" + packet.getAddress().getHostName() + ";port:" + packet.getPort());
+//                    System.out.println(String.format("接收：%s", data));
+//                    System.out.println("ip:" + packet.getAddress().getHostName() + ";port:" + packet.getPort());
                     ConnectMsg connectMsg = JSON.parseObject(data, ConnectMsg.class);
                     connectMsg.setHost(packet.getAddress().getHostName());
                     connectMsg.setPort(packet.getPort());

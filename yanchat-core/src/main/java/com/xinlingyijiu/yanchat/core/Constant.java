@@ -36,5 +36,13 @@ public interface Constant {
         String CHAT_TEXT = "文字聊天";//文字聊天
     }
     //上线广播周期，单位秒
-    int ONLINE_POLLING_CYCLE_TIME = 30;
+    int ONLINE_POLLING_CYCLE_TIME = 10;
+
+    /**
+     * 模式
+     */
+    interface MODEL{
+        int BROADCAST = 0;//公开、广播
+        int APPOINT = 1;//指定ip,端口
+    }
 }
