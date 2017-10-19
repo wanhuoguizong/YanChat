@@ -1,5 +1,6 @@
 package com.xinlingyijiu.yanchat.test;
 
+import com.alibaba.fastjson.JSON;
 import com.xinlingyijiu.yanchat.core.user.User;
 import com.xinlingyijiu.yanchat.core.user.UserManager;
 import com.xinlingyijiu.yanchat.core.user.UserManagerImpl;
@@ -75,6 +76,26 @@ public class Test1 {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    @Test
+    public void json(){
+        TestUser testUser = new TestUser();
+        testUser.setLoginTimeStemp(631232632123252453L);
+        User user = testUser;
+        System.out.println(JSON.toJSONString(testUser));
+
+    }
+
+    class TestUser extends User{
+        private long loginTimeStemp;
+
+        public long getLoginTimeStemp() {
+            return loginTimeStemp;
+        }
+
+        public void setLoginTimeStemp(long loginTimeStemp) {
+            this.loginTimeStemp = loginTimeStemp;
         }
     }
 }

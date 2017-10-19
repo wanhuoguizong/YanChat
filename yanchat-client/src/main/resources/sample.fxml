@@ -5,13 +5,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
-<GridPane fx:controller="com.xinlingyijiu.yanchat.client.Controller"
+<GridPane fx:controller="com.xinlingyijiu.yanchat.client.controller.Controller"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-    <Label text="昵称" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-    <TextField fx:id="userName" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <Label text="昵称"  GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+    <TextField fx:id="userName"  GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
     <!--<Label text="密码" GridPane.columnIndex="0" GridPane.rowIndex="1"/>-->
     <!--<PasswordField  fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="1"/>-->
-    <Button fx:id="startBtn" text="开始" GridPane.rowIndex="1" GridPane.columnSpan="2" />
+    <Button fx:id="startBtn" text="开始" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2" onMouseClicked="#show"/>
 
 </GridPane>
