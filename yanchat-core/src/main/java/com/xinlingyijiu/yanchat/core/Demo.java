@@ -49,7 +49,7 @@ public class Demo {
 
         YanChatApplication.start(context);
 
-        while (true);
+//        while (true);
     }
 
     public static String getScannerNextLine(Scanner scanner,String msg ,String... contan){

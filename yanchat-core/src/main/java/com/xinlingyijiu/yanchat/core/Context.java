@@ -329,7 +329,7 @@ public class Context {
         SimpleSocketManager socketManager = new SimpleSocketManager();
         try {
             socketManager.initMulticastSocket(getBroadcastHost(),getBroadcastPort());
-            socketManager.initDatagramSocket(Constant.DEFAULT_PORT.UDP);
+            socketManager.initDatagramSocket(getUdpPort());
         } catch (IOException e) {
             e.printStackTrace();
         }

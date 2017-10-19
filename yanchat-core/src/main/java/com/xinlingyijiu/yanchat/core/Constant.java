@@ -12,7 +12,7 @@ public interface Constant {
     interface DEFAULT_PORT{
         int BROADCAST = 9250;//广播
         int TCP = 9350;//tcp
-        int UDP = 9450;//udp
+        int UDP = 9451;//udp
     }
     //队列key
     interface QUEUE_KEY{

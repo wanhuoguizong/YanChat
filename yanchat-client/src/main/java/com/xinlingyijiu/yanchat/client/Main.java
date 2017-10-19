@@ -21,14 +21,14 @@ public class Main extends Application {
 //        primaryStage.setScene(new Scene(root, 300, 275));
 
         Pane pane  = new Pane();
-        Button button = new Button("��ʼ");
+        Button button = new Button("开始");
         button.setOnMouseClicked(event -> {
 //            primaryStage.close();
 //            Stage newStage = new Stage();
 //            newStage.setTitle("new");
 //            newStage.show();
             Pane spane  = new Pane();
-            Button sButton = new Button("����");
+            Button sButton = new Button("结束");
             spane.getChildren().add(sButton);
             primaryStage.setScene(new Scene(spane, 300, 275));
         });
@@ -38,6 +38,14 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(pane, 300, 275));
         primaryStage.show();
 
+        //1。启动后基础设置
+        //2.启动
+        //3.接收命令
+        //3.1 获取列表
+        //3.2 选择用户聊天
+        //3.2.1 创建聊天室(会话)
+        //3.2.2 聊天室（会话）列表
+        //3.2.3 切换聊天室
 
 
 //        primaryStage.close();

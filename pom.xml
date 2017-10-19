@@ -11,6 +11,7 @@
     <modules>
         <module>yanchat-core</module>
         <module>yanchat-client</module>
+        <module>yanchat-cmd</module>
     </modules>
     <properties>
         <junit.version>4.12</junit.version>
@@ -23,6 +24,14 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
