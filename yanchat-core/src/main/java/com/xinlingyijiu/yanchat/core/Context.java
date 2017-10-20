@@ -3,21 +3,21 @@ package com.xinlingyijiu.yanchat.core;
 import com.xinlingyijiu.yanchat.core.bean.Address;
 import com.xinlingyijiu.yanchat.core.bean.ConnectMsg;
 import com.xinlingyijiu.yanchat.core.bean.Model;
-import com.xinlingyijiu.yanchat.core.net.broadcast.Broadcast;
-import com.xinlingyijiu.yanchat.core.net.broadcast.BroadcastImpl;
 import com.xinlingyijiu.yanchat.core.consumer.ConnectMsgConsumer;
 import com.xinlingyijiu.yanchat.core.exception.YanChatRuntimeException;
 import com.xinlingyijiu.yanchat.core.msg.MsgHandleContext;
 import com.xinlingyijiu.yanchat.core.msg.StringMsgConverseHandle;
 import com.xinlingyijiu.yanchat.core.msg.StringMsgHandle;
+import com.xinlingyijiu.yanchat.core.net.broadcast.Broadcast;
+import com.xinlingyijiu.yanchat.core.net.broadcast.BroadcastImpl;
 import com.xinlingyijiu.yanchat.core.net.socket.SimpleSocketManager;
 import com.xinlingyijiu.yanchat.core.net.udp.UDPConnect;
 import com.xinlingyijiu.yanchat.core.net.udp.UDPConnectImpl;
-import com.xinlingyijiu.yanchat.core.queue.*;
-import com.xinlingyijiu.yanchat.core.service.ChatMsgService;
-import com.xinlingyijiu.yanchat.core.service.ChatMsgServiceImpl;
-import com.xinlingyijiu.yanchat.core.service.OnlineService;
-import com.xinlingyijiu.yanchat.core.service.OnlineServiceImpl;
+import com.xinlingyijiu.yanchat.core.queue.MsgProducerImpl;
+import com.xinlingyijiu.yanchat.core.queue.QueueListenner;
+import com.xinlingyijiu.yanchat.core.queue.QueueListennerImpl;
+import com.xinlingyijiu.yanchat.core.queue.QueueManagerImpl;
+import com.xinlingyijiu.yanchat.core.service.*;
 import com.xinlingyijiu.yanchat.core.user.User;
 import com.xinlingyijiu.yanchat.core.user.UserContext;
 import com.xinlingyijiu.yanchat.core.user.UserManager;
@@ -43,6 +43,7 @@ public class Context {
     private MsgHandleContext msgHandleContext;
     private OnlineService onlineService;
     private ChatMsgService chatMsgService;
+    private ChatSessionService chatSessionService;
 
     private Model model;
 
@@ -86,6 +87,14 @@ public class Context {
 
     public String getBroadcastHost() {
         return broadcastHost;
+    }
+
+    public ChatSessionService getChatSessionService() {
+        return chatSessionService;
+    }
+
+    public void setChatSessionService(ChatSessionService chatSessionService) {
+        this.chatSessionService = chatSessionService;
     }
 
     public void setBroadcastHost(String broadcastHost) {
@@ -272,8 +281,13 @@ public class Context {
         this.setOnlineService(onlineService);
         consumer.setOnlineService(onlineService);
 
+        ChatSessionServiceImpl chatSessionService = new ChatSessionServiceImpl();
+        chatSessionService.setConnect(udpConnect);
+        this.setChatSessionService(chatSessionService);
+
         ChatMsgServiceImpl chatMsgService = new ChatMsgServiceImpl();
         chatMsgService.setConnect(udpConnect);
+        chatMsgService.setChatSessionService(chatSessionService);
         this.setChatMsgService(chatMsgService);
         consumer.setChatMsgService(chatMsgService);
 
@@ -328,6 +342,8 @@ public class Context {
         //广播socket
         SimpleSocketManager socketManager = new SimpleSocketManager();
         try {
+//            if (model.)//todo
+
             socketManager.initMulticastSocket(getBroadcastHost(),getBroadcastPort());
             socketManager.initDatagramSocket(getUdpPort());
         } catch (IOException e) {
@@ -356,8 +372,13 @@ public class Context {
         this.setOnlineService(onlineService);
         consumer.setOnlineService(onlineService);
 
+        ChatSessionServiceImpl chatSessionService = new ChatSessionServiceImpl();
+        chatSessionService.setConnect(udpConnect);
+        this.setChatSessionService(chatSessionService);
+
         ChatMsgServiceImpl chatMsgService = new ChatMsgServiceImpl();
         chatMsgService.setConnect(udpConnect);
+        chatMsgService.setChatSessionService(chatSessionService);
         this.setChatMsgService(chatMsgService);
         consumer.setChatMsgService(chatMsgService);
 

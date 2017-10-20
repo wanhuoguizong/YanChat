@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by laotou on 2017/10/12.
@@ -96,6 +97,13 @@ public class Test1 {
 
         public void setLoginTimeStemp(long loginTimeStemp) {
             this.loginTimeStemp = loginTimeStemp;
+        }
+    }
+    @Test
+    public void incretment(){
+        AtomicInteger idAtomic = new AtomicInteger(0);
+        for (int i = 0; i < 100; i++) {
+            System.out.println(idAtomic.incrementAndGet());
         }
     }
 }

@@ -43,8 +43,11 @@ public class Demo {
         user.setHost("localhost");
         context.getUserManager().setCurrentUser(user);
 
-        context.getOnlineService().after(u ->
-                        System.out.println(String.format("%s(%s:%s)上线啦", u.getNickName(), u.getHost(), u.getUdpPort()))
+        context.getOnlineService().after((afterUser,frontUser) -> {
+                    if (frontUser == null || !frontUser.isOnline()) {
+                        System.out.println(String.format("%s(%s:%s)上线啦", afterUser.getNickName(), afterUser.getHost(), afterUser.getUdpPort()));
+                    }
+                }
         );
 
         YanChatApplication.start(context);

@@ -38,11 +38,12 @@ public interface ChatMsgService {
 
     /**
      * 发送
-     * @param targetUserId 目标用户id
+     * @param chatSessionId 会话id
      * @param content 消息内容
      * @throws IOException
      */
-    void send(String  targetUserId,String content) throws IOException;
+    void send(String  chatSessionId,String content) throws IOException;
 
 
+    void sendToUser(String targetUserId, String content) throws IOException;
 }

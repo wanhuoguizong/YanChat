@@ -8,16 +8,18 @@ import com.xinlingyijiu.yanchat.core.bean.Model;
 import com.xinlingyijiu.yanchat.core.exception.YanChatRuntimeException;
 import com.xinlingyijiu.yanchat.core.net.Connect;
 import com.xinlingyijiu.yanchat.core.user.User;
+import com.xinlingyijiu.yanchat.core.user.UserManager;
 import com.xinlingyijiu.yanchat.util.ScheduledExecutorUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class OnlineServiceImpl implements OnlineService {
     private Connect connect;
-    private List<Consumer<User>> afterList;
+    private List<BiConsumer<User,User>> afterList;
 
     public OnlineServiceImpl() {
         afterList = new ArrayList<>();
@@ -35,21 +37,27 @@ public class OnlineServiceImpl implements OnlineService {
 
     @Override
     public void receive(User user) {
-        Context.getInstance().getUserManager().online(user);
-        executeAllAfter(user);
+        user.setLastOnlineTime(System.currentTimeMillis());
+        UserManager userManager = Context.getInstance().getUserManager();
+
+        if (user.getId().equals(userManager.getCurrentUser().getId())) return;
+
+        User old = userManager.get(user.getId());
+        userManager.online(user);
+        executeAllAfter(user,old);
     }
 
     @Override
-    public void after(Consumer<User> after) {
+    public void after(BiConsumer<User,User> after) {
         this.afterList.add(after);
     }
 
     @Override
-    public void executeAllAfter(User user) {
+    public void executeAllAfter(User newUser,User oldUser) {
         if (this.afterList.isEmpty()) return;
-        for (Consumer<User> after : afterList) {
+        for (BiConsumer<User,User> after : afterList) {
             try {
-                after.accept(user);
+                after.accept(newUser,oldUser);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -81,5 +89,14 @@ public class OnlineServiceImpl implements OnlineService {
 
         };
         ScheduledExecutorUtil.getScheduler().scheduleAtFixedRate(runnable,0,cycleTime, TimeUnit.SECONDS);
+    }
+
+    public void offlineTask(){
+        List<User> userList = Context.getInstance().getUserContext().getAll();
+        if (!userList.isEmpty()){
+            for (User user : userList) {
+//                if (user)
+            }
+        }
     }
 }

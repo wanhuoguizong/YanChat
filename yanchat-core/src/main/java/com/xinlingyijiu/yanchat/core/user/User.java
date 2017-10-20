@@ -13,7 +13,15 @@ public class User implements Serializable{
     private Integer tcpPort;
     private Integer udpPort;
     private boolean online;
+    private long lastOnlineTime;
 
+    public long getLastOnlineTime() {
+        return lastOnlineTime;
+    }
+
+    public void setLastOnlineTime(long lastOnlineTime) {
+        this.lastOnlineTime = lastOnlineTime;
+    }
 
     public User() {
 

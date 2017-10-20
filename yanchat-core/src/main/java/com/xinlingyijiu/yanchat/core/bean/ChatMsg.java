@@ -9,16 +9,25 @@ public class ChatMsg {
     private String id;
     private String content;
     private String sendUserId;
-    private String targetUserId;
+//    private String targetUserId;
+    private String chatSessionId;
     private long timestemp;
 
-    public String getTargetUserId() {
-        return targetUserId;
+    public String getChatSessionId() {
+        return chatSessionId;
     }
 
-    public void setTargetUserId(String targetUserId) {
-        this.targetUserId = targetUserId;
+    public void setChatSessionId(String chatSessionId) {
+        this.chatSessionId = chatSessionId;
     }
+
+//    public String getTargetUserId() {
+//        return targetUserId;
+//    }
+//
+//    public void setTargetUserId(String targetUserId) {
+//        this.targetUserId = targetUserId;
+//    }
 
     public ChatMsg() {
         id = GUIDUtil.genRandomGUID();

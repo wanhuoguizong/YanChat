@@ -33,7 +33,9 @@ public interface Constant {
     //消息类型
     interface MSG_TYPE {
         String ONLINE = "online";
-        String CHAT_TEXT = "文字聊天";//文字聊天
+        String CHAT_TEXT = "chat";//文字聊天
+        String CREATE_SESSION = "create_session";//文字聊天
+        String SESSION_INFO = "SESSION_INFO";
     }
     //上线广播周期，单位秒
     int ONLINE_POLLING_CYCLE_TIME = 10;
