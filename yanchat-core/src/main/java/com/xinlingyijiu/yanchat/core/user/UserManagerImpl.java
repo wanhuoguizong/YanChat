@@ -87,7 +87,13 @@ public class UserManagerImpl implements UserManager {
     @Override
     public synchronized User get(String userId) {
         User user = this.userMap.get(userId);
-        if (user == null) return null;
+        if (user == null ) {
+            if (currentUser != null &&  Objects.equals(currentUser.getId(),userId)){
+                user = currentUser;
+            }else {
+                return null;
+            }
+        }
         return cloneUser(user);
     }
 

@@ -38,7 +38,7 @@ public class CmdServiceImpl implements CmdService {
                 .append(Cmd.PREFIX_EXIT).append("  退出会话。\n");
         String helpMsg = sb.toString();
         System.out.println(helpMsg);
-        waitForCmd(null);
+//        waitForInput();
     }
 
     private void waitForCmd(String msg) {
@@ -50,20 +50,24 @@ public class CmdServiceImpl implements CmdService {
     public void showUsers()  {
 
         List<User> list = Context.getInstance().getUserContext().getAll();
-        if (list.isEmpty()) return;
+        if (list.isEmpty()) {
+            System.out.println("当前没有用户在线！");
+//            waitForInput();
+        }else {
 //        System.out.println("请选择用户序号开始聊天！");
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            User user = list.get(i);
-            if(user == null) continue;
-            sb.append(i).append("  ").append(user.getNickName())
-                    .append("（").append(user.getHost())
-                    .append(":").append(user.getUdpPort())
-                    .append("）");
-        }
-        System.out.println(sb.toString());
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                User user = list.get(i);
+                if (user == null) continue;
+                sb.append(i).append("  ").append(user.getNickName())
+                        .append("（").append(user.getHost())
+                        .append(":").append(user.getUdpPort())
+                        .append("）").append("\n");
+            }
+            System.out.println(sb.toString());
 
-        selectUser(list);
+            selectUser(list);
+        }
     }
 
     /**
@@ -72,17 +76,22 @@ public class CmdServiceImpl implements CmdService {
      * @throws IOException
      */
     private void selectUser(List<User> list)  {
-        String index = ScannerUtil.scannerInput(String.format("请选择用户序号[0-%d]开始聊天：", list.size() - 1),
-                s1 -> s1.length() == 0 || s1.matches(String.format("^[0-%d]*$",list.size() - 1)));
+        String index = ScannerUtil.scannerInput(String.format("请选择用户序号[0-%d]开始聊天（多人聊天可用空格或逗号分隔）：", list.size() - 1),
+                s1 -> s1.length() == 0 || s1.matches(String.format("^([0-%d]+[ ,，]?)*$",list.size() - 1)));
         if (index.length() == 0) {
             System.out.println("未选择用户");
             return;
         }
-        String userId = list.get(Integer.parseInt(index)).getId();
         List<String> userIdList = new ArrayList<>();
         Context context = Context.getInstance();
         userIdList.add(context.getUserContext().getCurrentUser().getId());
-        userIdList.add(userId);
+        for (String i : index.split("[ ,，]")) {
+            if (i.length() == 0 || userIdList.contains(i)) continue;
+            String userId = list.get(Integer.parseInt(i)).getId();
+
+            userIdList.add(userId);
+
+        }
 
         ChatSession chatSession = context.getChatSessionService().createByUserIdsIfNotExist(userIdList);
         intoSession(chatSession);
@@ -90,7 +99,7 @@ public class CmdServiceImpl implements CmdService {
     }
     //进入聊天室
     private void intoSession(ChatSession chatSession){
-        System.out.println("进入会话");
+        System.out.println(String.format("进入会话：%s", chatSession.getSessionName()));
         currentSession = chatSession;
         chat();
     }
@@ -129,10 +138,10 @@ public class CmdServiceImpl implements CmdService {
                 exitChatSession();
                 break;
         }
-        waitForInput();
+//        waitForInput();
     }
-
-    private void waitForInput() {
+    @Override
+    public void waitForInput() {
         if (currentSession == null) {
             waitForCmd(null);
         }else {
@@ -143,7 +152,11 @@ public class CmdServiceImpl implements CmdService {
     private void showSession() {
         Context context = Context.getInstance();
         List<ChatSession> list = context.getChatSessionService().getAll();
-        if (list.isEmpty()) return;
+        if (list.isEmpty()){
+            System.out.println("当前还没有打开会话");
+//            waitForInput();
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < list.size(); i++) {
             ChatSession session = list.get(i);
@@ -151,11 +164,13 @@ public class CmdServiceImpl implements CmdService {
             sb.append(i).append("  ").append(session.getSessionName());
             for (String uid : session.getUserIdList()) {
                 User user = context.getUserContext().get(uid);
+                if (user == null) break;
                 sb.append("\n\t").append(user.getNickName());
                 sb.append("（").append(user.getHost())
                         .append(":").append(user.getUdpPort())
                         .append("）");
             }
+            sb.append("\n");
 
         }
 

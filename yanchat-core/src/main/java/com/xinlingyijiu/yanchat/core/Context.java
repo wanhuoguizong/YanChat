@@ -31,7 +31,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 /**
- *  todo 垃圾的上下文，有时间改良
+ * todo 垃圾的上下文，有时间改良
  * Created by laotou on 2017/10/12.
  */
 public class Context {
@@ -47,14 +47,15 @@ public class Context {
 
     private Model model;
 
-    private String broadcastHost ;
+    private String broadcastHost;
     private int broadcastPort;
     private int tcpPort;
     private int udpPort;
 
 
     private static Context context;
-    private Context(){
+
+    private Context() {
         this.broadcastHost = Constant.BROADCAST_DEFAULT_HOST;
         this.broadcastPort = Constant.DEFAULT_PORT.BROADCAST;
         this.tcpPort = Constant.DEFAULT_PORT.TCP;
@@ -98,7 +99,7 @@ public class Context {
     }
 
     public void setBroadcastHost(String broadcastHost) {
-        Objects.requireNonNull(broadcastHost,"broadcastHost must be not null!");
+        Objects.requireNonNull(broadcastHost, "broadcastHost must be not null!");
         this.broadcastHost = broadcastHost;
     }
 
@@ -127,11 +128,11 @@ public class Context {
     }
 
     public static Context getInstance() {
-        return context == null ?(context = new Context()) : context;
+        return context == null ? (context = new Context()) : context;
     }
 
     public void setUserContext(UserContext userContext) {
-        Objects.requireNonNull(userContext,"userContext must be not null!");
+        Objects.requireNonNull(userContext, "userContext must be not null!");
         this.userContext = userContext;
     }
 
@@ -140,7 +141,7 @@ public class Context {
     }
 
     public void setQueueListenner(QueueListenner queueListenner) {
-        Objects.requireNonNull(queueListenner,"queueListenner must be not null!");
+        Objects.requireNonNull(queueListenner, "queueListenner must be not null!");
         this.queueListenner = queueListenner;
     }
 
@@ -149,7 +150,7 @@ public class Context {
     }
 
     public void setMsgHandleContext(MsgHandleContext msgHandleContext) {
-        Objects.requireNonNull(msgHandleContext,"msgHandleContext must be not null!");
+        Objects.requireNonNull(msgHandleContext, "msgHandleContext must be not null!");
         this.msgHandleContext = msgHandleContext;
     }
 
@@ -158,7 +159,7 @@ public class Context {
     }
 
     public void setBroadcast(Broadcast broadcast) {
-        Objects.requireNonNull(broadcast,"broadcast must be not null!");
+        Objects.requireNonNull(broadcast, "broadcast must be not null!");
         this.broadcast = broadcast;
     }
 
@@ -172,7 +173,7 @@ public class Context {
     }
 
     public void setUserManager(UserManager userManager) {
-        Objects.requireNonNull(userManager,"userManager must be not null!");
+        Objects.requireNonNull(userManager, "userManager must be not null!");
         this.userContext = userManager;
         this.userManager = userManager;
     }
@@ -188,7 +189,7 @@ public class Context {
     /**
      * 全部使用默认的实现
      */
-    public void useDefaultContext(){
+    public void useDefaultContext() {
 
         //当前用户
         User user = new User();
@@ -209,7 +210,7 @@ public class Context {
         this.setUserManager(userManager);
 
 //        广播模式
-        Address address = new Address(Constant.BROADCAST_DEFAULT_HOST,Constant.DEFAULT_PORT.BROADCAST);
+        Address address = new Address(Constant.BROADCAST_DEFAULT_HOST, Constant.DEFAULT_PORT.BROADCAST);
         Model model = new Model();
         model.setModel(Constant.MODEL.BROADCAST);
         model.addAddress(address);
@@ -220,7 +221,6 @@ public class Context {
 //        model.setModel(Constant.MODEL.BROADCAST);
 //        model.addAddress(address);
 //        this.setModel(model);
-
 
 
         //消息消费者
@@ -234,7 +234,7 @@ public class Context {
         //队列监听者
         QueueListennerImpl queueListenner = QueueListennerImpl.getInstance();
         queueListenner.setQueueManager(queueManager);
-        queueListenner.bindConsumer(Constant.QUEUE_KEY.BROADCAST,consumer);
+        queueListenner.bindConsumer(Constant.QUEUE_KEY.BROADCAST, consumer);
         this.setQueueListenner(queueListenner);
 
         //消息转换处理
@@ -243,7 +243,7 @@ public class Context {
         StringMsgConverseHandle stringMsgConverseHandle = new StringMsgConverseHandle();//字符串
         //消息出列
         MsgHandleContext msgHandleContext = MsgHandleContext.getInstance();
-        msgHandleContext.putConverseHandle(Constant.DATA_TYPE.TEXT,stringMsgConverseHandle);//文本逆向转换
+        msgHandleContext.putConverseHandle(Constant.DATA_TYPE.TEXT, stringMsgConverseHandle);//文本逆向转换
         msgHandleContext.putMsgHandle(Constant.DATA_TYPE.TEXT, stringMsgHandle);//文本转换
         this.setMsgHandleContext(msgHandleContext);
 
@@ -253,7 +253,7 @@ public class Context {
         //广播socket
         SimpleSocketManager socketManager = new SimpleSocketManager();
         try {
-            socketManager.initMulticastSocket(getBroadcastHost(),getBroadcastPort());
+            socketManager.initMulticastSocket(getBroadcastHost(), getBroadcastPort());
             socketManager.initDatagramSocket(Constant.DEFAULT_PORT.UDP);
         } catch (IOException e) {
             e.printStackTrace();
@@ -268,14 +268,14 @@ public class Context {
 
         //上下线
         OnlineServiceImpl onlineService = new OnlineServiceImpl();
-        if (Objects.equals(model.getModel(),Constant.MODEL.BROADCAST)) {
+        if (Objects.equals(model.getModel(), Constant.MODEL.BROADCAST)) {
             //广播
             BroadcastImpl broadcast = new BroadcastImpl();
             broadcast.setMsgProducer(msgProducer);
             broadcast.setSocketManager(socketManager);
             this.setBroadcast(broadcast);
             onlineService.setConnect(broadcast);
-        }else if (Objects.equals(model.getModel(),Constant.MODEL.APPOINT)) {
+        } else if (Objects.equals(model.getModel(), Constant.MODEL.APPOINT)) {
             onlineService.setConnect(udpConnect);
         }
         this.setOnlineService(onlineService);
@@ -295,10 +295,10 @@ public class Context {
 
     /**
      * 暂时这样搞吧，屎一样的代码
-     *
+     * <p>
      * 初始化
      */
-    public void init(Model model){
+    public void init(Model model) {
 
         //当前用户
         //User
@@ -309,7 +309,6 @@ public class Context {
 
 //        广播模式
         this.setModel(model);
-
 
 
         //消息消费者
@@ -323,7 +322,7 @@ public class Context {
         //队列监听者
         QueueListennerImpl queueListenner = QueueListennerImpl.getInstance();
         queueListenner.setQueueManager(queueManager);
-        queueListenner.bindConsumer(Constant.QUEUE_KEY.BROADCAST,consumer);
+        queueListenner.bindConsumer(Constant.QUEUE_KEY.BROADCAST, consumer);
         this.setQueueListenner(queueListenner);
 
         //消息转换处理
@@ -332,7 +331,7 @@ public class Context {
         StringMsgConverseHandle stringMsgConverseHandle = new StringMsgConverseHandle();//字符串
         //消息出列
         MsgHandleContext msgHandleContext = MsgHandleContext.getInstance();
-        msgHandleContext.putConverseHandle(Constant.DATA_TYPE.TEXT,stringMsgConverseHandle);//文本逆向转换
+        msgHandleContext.putConverseHandle(Constant.DATA_TYPE.TEXT, stringMsgConverseHandle);//文本逆向转换
         msgHandleContext.putMsgHandle(Constant.DATA_TYPE.TEXT, stringMsgHandle);//文本转换
         this.setMsgHandleContext(msgHandleContext);
 
@@ -343,8 +342,10 @@ public class Context {
         SimpleSocketManager socketManager = new SimpleSocketManager();
         try {
 //            if (model.)//todo
+            if (Objects.equals(model.getModel(), Constant.MODEL.BROADCAST)) {
 
-            socketManager.initMulticastSocket(getBroadcastHost(),getBroadcastPort());
+                socketManager.initMulticastSocket(getBroadcastHost(), getBroadcastPort());
+            }
             socketManager.initDatagramSocket(getUdpPort());
         } catch (IOException e) {
             e.printStackTrace();
@@ -359,14 +360,14 @@ public class Context {
 
         //上下线
         OnlineServiceImpl onlineService = new OnlineServiceImpl();
-        if (Objects.equals(model.getModel(),Constant.MODEL.BROADCAST)) {
+        if (Objects.equals(model.getModel(), Constant.MODEL.BROADCAST)) {
             //广播
             BroadcastImpl broadcast = new BroadcastImpl();
             broadcast.setMsgProducer(msgProducer);
             broadcast.setSocketManager(socketManager);
             this.setBroadcast(broadcast);
             onlineService.setConnect(broadcast);
-        }else if (Objects.equals(model.getModel(),Constant.MODEL.APPOINT)) {
+        } else if (Objects.equals(model.getModel(), Constant.MODEL.APPOINT)) {
             onlineService.setConnect(udpConnect);
         }
         this.setOnlineService(onlineService);
@@ -375,6 +376,7 @@ public class Context {
         ChatSessionServiceImpl chatSessionService = new ChatSessionServiceImpl();
         chatSessionService.setConnect(udpConnect);
         this.setChatSessionService(chatSessionService);
+        consumer.setChatSessionService(chatSessionService);
 
         ChatMsgServiceImpl chatMsgService = new ChatMsgServiceImpl();
         chatMsgService.setConnect(udpConnect);
@@ -383,7 +385,6 @@ public class Context {
         consumer.setChatMsgService(chatMsgService);
 
     }
-
 
 
 }

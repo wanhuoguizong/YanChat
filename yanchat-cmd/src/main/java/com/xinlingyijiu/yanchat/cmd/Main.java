@@ -28,14 +28,15 @@ public class Main {
         //1。启动后基础设置
         //设置用户信息
         User user = configureUser();
+        context.setTcpPort(user.getTcpPort());
+        context.setBroadcastPort(user.getBroadcastPort());
+        context.setUdpPort(user.getUdpPort());
 
         //设置模式
         Model model = configureModel();
         context.init(model);
 
-        context.setTcpPort(user.getTcpPort());
-        context.setBroadcastPort(user.getBroadcastPort());
-        context.setUdpPort(user.getUdpPort());
+
         context.getUserManager().setCurrentUser(user);
 
         context.getOnlineService().after((afterUser,frontUser) -> {
@@ -47,7 +48,8 @@ public class Main {
         context.getChatMsgService().after(chatMsg -> {
             ChatSession chatSession = context.getChatSessionService().getById(chatMsg.getChatSessionId());
             if (chatSession == null) return;
-            User sendUser = context.getUserContext().get(chatMsg.getSendUserId());
+            User sendUser = Objects.equals(user.getId(),chatMsg.getSendUserId())?  user :  context.getUserContext().get(chatMsg.getSendUserId());
+            if (sendUser == null) return;
             String format = String.format("【%s】%s(%s:%d)\n\t%s",
                     chatSession.getSessionName(),
                     sendUser.getNickName(),
@@ -61,6 +63,9 @@ public class Main {
         System.out.println("欢迎使用YanChat！");
         //3.接收命令
         cmdService.showHelp();
+        while (true) {
+            cmdService.waitForInput();
+        }
         //3.1 获取列表
         //3.2 选择用户聊天
         //3.2.1 创建聊天室(会话)

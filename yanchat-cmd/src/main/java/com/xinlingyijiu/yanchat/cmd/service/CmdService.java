@@ -7,4 +7,5 @@ public interface CmdService {
     public boolean isValiCmd(String cmd);
     public String inputCmd(String msg);
 
+    void waitForInput();
 }

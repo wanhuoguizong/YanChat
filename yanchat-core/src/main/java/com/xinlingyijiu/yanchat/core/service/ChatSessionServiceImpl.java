@@ -9,10 +9,7 @@ import com.xinlingyijiu.yanchat.core.user.User;
 import com.xinlingyijiu.yanchat.core.user.UserContext;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ChatSessionServiceImpl implements ChatSessionService {
     private List<ChatSession> chatSessionList = new ArrayList<>();
@@ -70,12 +67,12 @@ public class ChatSessionServiceImpl implements ChatSessionService {
             }
             ChatSession chatSession = new ChatSession();
             chatSession.setUserIdList(userIds);
-            if (userIds.size() > 1) {
+            if (userIds.size() > 2) {
                 chatSession.setSessionName(String.format("多人会话%s", chatSession.getId()));
             }else {
                 UserContext userContext = Context.getInstance().getUserContext();
                 User currentUser = userContext.getCurrentUser();
-                User targetUser = userContext.get(userIds.get(0));
+                User targetUser = userContext.get(Objects.equals(currentUser.getId(),userIds.get(0)) ? userIds.get(1) : userIds.get(0));
                 chatSession.setSessionName(String.format("%s-%s",currentUser.getNickName(),targetUser.getNickName()));
             }
             putChatSession(chatSession);

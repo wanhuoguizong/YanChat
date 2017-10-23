@@ -10,10 +10,7 @@ import com.xinlingyijiu.yanchat.core.net.Connect;
 import com.xinlingyijiu.yanchat.core.user.User;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -109,6 +106,7 @@ public class ChatMsgServiceImpl implements ChatMsgService {
         if (msg.getChatSessionId() == null) throw new YanChatRuntimeException("Unknown msg's chatSessionId;");
         ChatSession chatSession = getChatSession(msg);
         for (String targetUserId : chatSession.getUserIdList()) {
+            if (Objects.equals(currentUser.getId(), targetUserId)) continue;
             User targetUser = context.getUserContext().get(targetUserId);
             if (targetUser == null) break;
             ConnectMsg<ChatMsg> connectMsg = new ConnectMsg<>(Constant.MSG_TYPE.CHAT_TEXT, msg);
