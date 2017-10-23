@@ -26,7 +26,7 @@ public class Controller implements Initializable{
     }
 
     public void show(MouseEvent mouseEvent) {
-        System.out.println(userName.getText());
+//        System.out.println(userName.getText());
 
     }
 }

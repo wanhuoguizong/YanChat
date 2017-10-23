@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane prefHeight="400.0" prefWidth="300.0" stylesheets="/view/css/UserConfig.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.xinlingyijiu.yanchat.client.controller.UserConfigController">
+    <fx:define>
+        <ToggleGroup fx:id="modelRadio"/>
+    </fx:define>
+
+   <children>
+       <Label layoutX="102.0" layoutY="25.0" text="设置您的用户信息" />
+      <Label layoutX="48.0" layoutY="64.0" text="昵称" />
+      <TextField fx:id="nickNameText" layoutX="92.0" layoutY="60.0" />
+
+       <Label layoutX="45.0" layoutY="107.0" text="模式" />
+       <RadioButton fx:id="broadcastModelRadio" layoutX="92.0" layoutY="106.0" mnemonicParsing="false" text="广播" toggleGroup="$modelRadio"/>
+       <RadioButton fx:id="appointModelRadio" layoutX="91.0" layoutY="134.0" mnemonicParsing="false" text="指定用户" toggleGroup="$modelRadio"/>
+
+      <Label layoutX="22.0" layoutY="178.0" text="广播端口" />
+      <TextField fx:id="broadcastPortText" layoutX="91.0" layoutY="174.0"  />
+       <Label layoutX="22.0" layoutY="218.0" text="UDP端口" />
+       <TextField fx:id="udpPortText" layoutX="91.0" layoutY="214.0"   />
+       <Label layoutX="22.0" layoutY="258.0" text="TCP端口" />
+       <TextField fx:id="tcpPortText" layoutX="91.0" layoutY="254.0"   />
+
+
+
+       <Button fx:id="nextBtn" layoutX="124.0" layoutY="346.0" text="下一步" />
+   </children>
+
+</AnchorPane>
